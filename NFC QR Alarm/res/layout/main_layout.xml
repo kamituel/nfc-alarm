@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="40dp" >
+
+
+
+    <pl.kamituel.nfc_qr_alarm.ClockSurfaceView
+        android:id="@+id/clock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/timeTV" />
+
+    <!--
+         <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" 
+		android:layout_weight="3" android:background="#00ff00"></RelativeLayout>
+    -->
+
+
+    <!-- </pl.kamituel.nfc_qr_alarm.SquareLinearLayout> -->
+
+    <Button
+        android:id="@+id/enableAlarmBtn"
+        style="@style/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="setAlarm"
+        android:text="" />
+
+
+    <TextView
+        android:id="@+id/wakupatTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/timeTV"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/wake_up_tommorow_at"
+        android:textSize="24dp"
+        android:alpha="0.6" />
+
+    <TextView
+        android:id="@+id/timeTV"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/wakupatTV"
+        android:layout_alignBottom="@+id/wakupatTV"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:text=""
+        android:textSize="36dip" />
+        
+        <Spinner android:id="@+id/timeofdayList"
+            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/timeTV"
+        android:layout_toRightOf="@+id/timeTV"
+        android:layout_marginBottom="10dp"
+        android:textSize="24dp"
+        android:alpha="0.6">
+        </Spinner>
+
+</RelativeLayout>

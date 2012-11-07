@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<resources>
+	<item name="clock_time_on_previous_touch" type="id"/>
+</resources>

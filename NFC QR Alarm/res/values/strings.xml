@@ -1,0 +1,63 @@
+<resources>
+    <string name="welcome_activity_name">NFC Alarm Clock</string>
+    <string name="next">Next</string>
+    <string name="register_tag_help">Press NFC tag to this device</string>
+    <string name="register_tag_help2">Usually, it is enough to press it against back of a phone or tablet.</string>
+    
+    <string name="mam_karte">I have NFC card</string>
+    <string name="go_to_app">Go to the alarm</string>
+    <string name="back">Back</string>
+    <string name="scan_another_tag">Scan another tag</string>
+    
+    <string name="next_after_nfc_read">Scan NFC tag \n to continue</string>
+    <string name="how_it_works">How it works?</string>
+    
+    <string name="morning">in the morning</string>
+    <string name="evening">in the evening</string>
+    <string name="wake_up_tommorow_at">Wake up at</string>
+    <string name="enable_alarm">Enable alarm</string>
+    <string name="disable_alarm">Disable alarm</string>
+    
+    <string name="rtl_p1">1. Assign NFC tag to this device.</string>
+    <string name="rtl_p11">Alarm will ring until you put the same tag against this device.</string>
+    <string name="rtl_p2">2. Put this tag far away from your bed.</string>
+    <string name="rtl_p21">Bathroom is a good idea. In the morning you\'ll have to go there to disable an alarm.</string>
+    <string name="rtl_p3">3. Alarm rings. You disable it with NFC tag.</string>
+    <string name="rtl_p31">You disarmed it, but you\'re far away from your bed. Success!</string>
+    
+    <string name="rtl_assign_nfc_tag">Scan NFC tag</string>
+    <string name="rtl_2_p1">Press NFC tag against back of this device.</string>
+    <string name="rtl_2_p11">If this fails, try pressing this tag in different places around your device.</string>
+    <string name="rtl_2_p2">What is a NFC tag?</string>
+    <string name="rtl_2_p21">It is a contactless card, like library card, public transport card, univeristy ID.</string>
+    <string name="rtl_2_p22">Pay Pass card are not supported, unfortunately.</string>
+    
+    <string name="rtl_summary">Tag scanned</string>
+    <string name="rtl_3_p1">No go put it far away from your bed.</string>
+    <string name="rtl_3_p11">In the morning alarm will not stop until you press this device against NFC tag.</string>
+    
+    <string name="good_morning_sunshine">Good morning Sunshine!</string>
+    <string name="press_nfc_to_disable">Press NFC tag to disable</string>
+    <string name="snooze">Snooze</string>
+    
+    <string name="use_red_arrow_to_set_alarm">Use red clock hand to set alarm time</string>
+    <string name="alarm_due_in">Alarm due in</string>
+    <string name="hrs">h</string>
+    <string name="min">m</string>
+    
+    <string name="reset">Reset settings</string>
+    <string name="attribution">Credits</string>
+    <string name="close">Close</string>
+    <string name="author">Author</string>
+    <string name="music">Music</string>
+    
+    <string-array name="time_of_day">
+        <item>in the morning</item>
+        <item>in the evening</item>
+    </string-array>
+    
+    <string name="no_nfc_d_title">NFC disabled</string>
+    <string name="no_nfc_d_desc">NFC is required for this alarm clock to work.\n\nPlease go to the system settings and enable NFC.</string>
+    <string name="no_nfc_open_settings">Open settings</string>
+    <string name="no_nfc_close_alarm_clock">Close this app</string>
+</resources>

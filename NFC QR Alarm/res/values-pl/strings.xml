@@ -1,0 +1,58 @@
+<resources>
+    <string name="welcome_activity_name">Budzik NFC</string>
+    <string name="next">Dalej</string>
+    <string name="register_tag_help">Zbliż tag NFC do tego urządzenia</string>
+    <string name="register_tag_help2">Najczęściej wystarcza przyłożenie tagu NFC do tylnej ściany telefonu lub tabletu.</string>
+    
+    <string name="mam_karte">Mam kartę NFC</string>
+    <string name="go_to_app">Przejdź do budzika</string>
+    <string name="back">Wstecz</string>
+    <string name="scan_another_tag">Zeskanuj inny tag</string>
+    
+    <string name="next_after_nfc_read">Zeskanuj tag NFC \n aby przejść dalej</string>
+    <string name="how_it_works">Jak to działa?</string>
+    
+    <string name="morning">rano</string>
+    <string name="evening">po południu</string>
+    <string name="wake_up_tommorow_at">Pobudka o</string>
+    <string name="enable_alarm">Włącz budzik</string>
+    <string name="disable_alarm">Wyłącz budzik</string>
+    
+    <string name="rtl_p1">1. Przypisujesz tag NFC do tabletu.</string>
+    <string name="rtl_p11">Wyłączenie budzika będzie możliwe tylko tym tagiem.</string>
+    <string name="rtl_p2">2. Zanieś tag daleko od łóżka.</string>
+    <string name="rtl_p21">Niech to będzie np. łazienka. Rano będziesz musiał pójść aż tam żeby wyłączyć budzik.</string>
+    <string name="rtl_p3">3. Budzik dzwoni. Wyłączasz go tagiem NFC.</string>
+    <string name="rtl_p31">Wyłączyłeś go, ale jesteś już daleko od łóżka. Udało się!</string>
+    
+    <string name="rtl_assign_nfc_tag">Zeskanuj tag NFC</string>
+    <string name="rtl_2_p1">Przyłóż tag NFC do tylnej ściany tego tabletu</string>
+    <string name="rtl_2_p11">Jesli to nie zadziała, spróbuj przyłożyć go w inne miejsca urządzenia.</string>
+    <string name="rtl_2_p2">Co to jest tag NFC?</string>
+    <string name="rtl_2_p21">To karta zbliżeniowa, np. karta miejska, wejściówka do pracy, legitymacja studencka.</string>
+    <string name="rtl_2_p22">Karty Pay Pass nie są kompatybilne.</string>
+    
+    <string name="rtl_summary">Tag odczytany</string>
+    <string name="rtl_3_p1">Teraz zanieś go daleko od swojego łóżka</string>
+    <string name="rtl_3_p11">Rano budzik nie pozwoli się wyłączyć, dopóki nie zbliżysz do tabletu tego taga.</string>
+    
+    <string name="good_morning_sunshine">Dzień dobry Słoneczko!</string>
+    <string name="press_nfc_to_disable">Zbliż tag NFC aby wyłączyć budzik</string>
+    <string name="snooze">Wycisz</string>
+    
+    <string name="use_red_arrow_to_set_alarm">Użyj czerwonej wskazówki aby ustawić czas budzika.</string>
+    <string name="alarm_due_in">Budzik za</string>
+    <string name="hrs">h</string>
+    <string name="min">m</string>
+    
+    <string name="reset">Resetuj ustawienia</string>
+    <string name="attribution">Podziękowania</string>
+    <string name="close">Zamknij</string>
+    <string name="author">Autor</string>
+    <string name="music">Muzyka</string>
+    
+    <string-array name="time_of_day">
+        <item>rano</item>
+        <item>po południu</item>
+    </string-array>
+</resources>

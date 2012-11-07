@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/reset"
+        android:showAsAction="withText"
+        android:title="@string/reset"/>
+    
+    <item
+        android:id="@+id/attribution"
+        android:showAsAction="withText"
+        android:title="@string/attribution"/>
+
+<!--     <item -->
+<!--         android:id="@+id/grab_screenshot" -->
+<!--         android:showAsAction="withText" -->
+<!--         android:title="Screenshot"/> -->
+    
+</menu>
