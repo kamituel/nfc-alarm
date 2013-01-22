@@ -6,7 +6,7 @@ import android.util.Log;
 public class Utils {
 	private final static String TAG = Utils.class.getSimpleName();
 	public static boolean RUNS_IN_EMULATOR;
-	public static final boolean TEST_ALARM_TIME = true;
+	public static final boolean TEST_ALARM_TIME = false;
 	
 	static {
 		Log.d(TAG, "Build.PRODUCT="+Build.PRODUCT);
