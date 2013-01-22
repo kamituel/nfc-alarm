@@ -26,6 +26,7 @@ public final class R {
     public static final class dimen {
         public static final int button_padding_bottom=0x7f080003;
         /**  Common part 
+ Common part 
          */
         public static final int button_padding_left=0x7f080000;
         public static final int button_padding_right=0x7f080001;
@@ -63,23 +64,17 @@ public final class R {
         public static final int rt_padding_bottom=0x7f080008;
         /**  Register Tag View 
      layout padding 
+ Register Tag View 
          */
         public static final int rt_padding_left=0x7f080005;
-        /**  Common part 
- Register Tag View 
-         */
         public static final int rt_padding_right=0x7f080006;
-        /**  Common part 
- Register Tag View 
-         */
         public static final int rt_padding_top=0x7f080007;
         /**      title, list items and details 
+     title, list items and details 
          */
         public static final int rt_title_text_size=0x7f080009;
         public static final int w_good_morning_text_size=0x7f080022;
         /**   Wake Up View 
- Common part 
- Register Tag View 
   Main View 
   Wake Up View 
          */

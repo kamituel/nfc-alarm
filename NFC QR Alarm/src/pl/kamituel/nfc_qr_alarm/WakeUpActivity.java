@@ -30,15 +30,13 @@ public class WakeUpActivity extends NfcActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wake_up_activity);
 		mPrefHelper = new PrefHelper(getApplicationContext());
-		
-		acquireWakeLock();
 
 		if ( Utils.RUNS_IN_EMULATOR ) {
 			TextView v = (TextView) findViewById(R.id.goodMorning1TV);
 			v.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					sendCommand(WakeUpService.CMD_STOP_ALARM);
+					disableAlarmAndQuit();
 				}
 			});
 		}
@@ -51,15 +49,19 @@ public class WakeUpActivity extends NfcActivity {
 		String storedTagId = mPrefHelper.getTag();
 
 		if ( storedTagId.equals(tagId) ) {
-			sendCommand(WakeUpService.CMD_STOP_ALARM);
-			
-			Intent i = new Intent(getApplicationContext(), MainActivity.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivity(i);
-			finish();
+			disableAlarmAndQuit();
 		} else {
 			Toast.makeText(getApplicationContext(), "This is not the correct tag", Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private void disableAlarmAndQuit () {
+		sendCommand(WakeUpService.CMD_STOP_ALARM);
+		
+		Intent i = new Intent(getApplicationContext(), MainActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		startActivity(i);
+		finish();
 	}
 
 	public void onSnooze (final View v) {
@@ -117,11 +119,23 @@ public class WakeUpActivity extends NfcActivity {
 		EasyTracker.getInstance().activityStart(this);
 	}
 	
+	@Override 
+	protected void onResume () {
+		super.onResume();
+		acquireWakeLock();
+	}
+	
+	@Override
+	protected void onPause () {
+		super.onPause();
+		releaseWakeLock();
+	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();
 
-		releaseWakeLock();
+		
 		EasyTracker.getInstance().activityStop(this);
 	}
 	
@@ -150,6 +164,9 @@ public class WakeUpActivity extends NfcActivity {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TRAININGCOUNTDOWN");
 		mWakeLock.acquire();
+		
+		Log.d(TAG, "Lock acquire");
+		
 		if (!mWakeLock.isHeld()) {
 			Log.e(TAG, "mWakeLock not acquired");
 		}
@@ -168,6 +185,7 @@ public class WakeUpActivity extends NfcActivity {
 		} catch (RuntimeException e) {
 			Log.e(TAG, "mWakeLock", e);
 		}
+		Log.d(TAG, "Log release");
 	}
 
 }

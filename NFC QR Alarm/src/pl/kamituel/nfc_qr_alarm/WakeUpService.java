@@ -84,8 +84,8 @@ public class WakeUpService extends Service {
 			
 			break;
 		case CMD_STOP_ALARM:
+			if ( mRunning) stopPlayback();
 			mRunning = false;
-			stopPlayback();
 			break;
 		case CMD_SNOOZE_ALARM:
 			if ( mRunning ) mPlayer.pause();
@@ -124,9 +124,16 @@ public class WakeUpService extends Service {
 
 	private void stopPlayback () {
 		Log.d(TAG, "stopPlayback()");
-		mPlayer.stop();
-		mPlayer.release();
-		mPlayer = null;
+		
+		// It's possible mPlayer == null. This is when
+		// stopPlayback() is called twice in a row.
+		// First invocation stops player and then calls
+		// stopSelf(). Then second invocation operates on
+		// new WakeUpService instance, where mPlayer is null.
+		if ( mRunning ) {
+			mPlayer.stop();
+			mPlayer.release();
+		}
 
 		stopSelf();
 	}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common part -->
+    <dimen name="button_padding_left">30dp</dimen>
+    <dimen name="button_padding_right">30dp</dimen>
+    <dimen name="button_padding_top">5dp</dimen>
+    <dimen name="button_padding_bottom">5dp</dimen>
+    <dimen name="button_text_size">20dp</dimen>
+    
+    <!-- Register Tag View -->
+    <dimen name="rt_padding_left">25dp</dimen>
+	<dimen name="rt_padding_right">20dp</dimen>
+    <dimen name="rt_padding_top">30dp</dimen>
+    <dimen name="rt_padding_bottom">20dp</dimen>
+	<!--     title, list items and details -->
+    <dimen name="rt_title_text_size">32dp</dimen>
+    <dimen name="rt_list_title_text_size">22dp</dimen>
+    <dimen name="rt_list_title_margin_left">18dp</dimen>
+    <dimen name="rt_list_title_margin_top">18dp</dimen>
+    <dimen name="rt_list_details_margin_left">18dp</dimen>
+    <dimen name="rt_list_details_margin_top">0dp</dimen>
+    <dimen name="rt_list_details_text_size">16dp</dimen>
+    	
+    <!--  Main View -->
+
+    
+    <!--  Wake Up View -->
+	<dimen name="w_snooze_progress_margin_left">70dp</dimen>
+	<dimen name="w_snooze_progress_margin_right">70dp</dimen>
+	<dimen name="w_good_morning_text_size">50dp</dimen>
+	<dimen name="m_wake_up_at_text_size">24dp</dimen>
+	<dimen name="m_wake_up_in_the_text_size">24dp</dimen>
+	<dimen name="m_wake_up_time_text_size">34dp</dimen>
+	<dimen name="m_wake_up_time_width">100dp</dimen>
+</resources>
