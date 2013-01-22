@@ -1,152 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content" android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
 
-	<ViewFlipper android:id="@+id/introFlipper"
-		android:layout_width="match_parent" android:layout_height="match_parent"
-		android:paddingTop="40dp" android:paddingRight="40dp"
-		android:paddingLeft="25dp" android:paddingBottom="40dp">
+    <ViewFlipper
+        android:id="@+id/introFlipper"
+        style="@style/register_tag_view_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
 
-		<RelativeLayout android:layout_width="match_parent"
-			android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
+            <Button
+                android:id="@+id/button1"
+                style="@style/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:onClick="goToTagDiscovery"
+                android:text="@string/next" />
 
-			<Button android:id="@+id/button1" style="@style/button"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_alignParentBottom="true"
-				android:layout_alignParentRight="true" android:onClick="goToTagDiscovery"
-				android:text="@string/next" />
+            <TextView
+                android:id="@+id/rtl_how_it_works_TV"
+                style="@style/register_tag_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/how_it_works" />
 
-			<TextView android:id="@+id/rtl_how_it_works_TV"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-				android:text="@string/how_it_works"  android:textSize="30dp" />
+            <TextView
+                android:id="@+id/rtl_p1"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_how_it_works_TV"
+                android:text="@string/rtl_p1" />
 
-			<TextView android:id="@+id/rtl_p1" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_how_it_works_TV"
-				android:layout_marginLeft="32dp" android:layout_marginTop="29dp"
-				android:text="@string/rtl_p1" android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_p11"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_p1"
+                android:text="@string/rtl_p11" />
 
-			<TextView android:id="@+id/rtl_p11" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_p1" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_p11"
-				android:textSize="18dp" android:alpha="0.6" />
+            <TextView
+                android:id="@+id/rtl_p2"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_p11"
+                android:text="@string/rtl_p2" />
 
-			<TextView android:id="@+id/rtl_p2" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_p11" android:layout_marginTop="36dp"
-				android:layout_marginLeft="32dp" android:text="@string/rtl_p2"
-				android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_p21"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_p2"
+                android:text="@string/rtl_p21" />
 
-			<TextView android:id="@+id/rtl_p21" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_p2" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_p21"
-				android:textSize="18dp" android:alpha="0.6" />
+            <TextView
+                android:id="@+id/rtl_p3"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_p21"
+                android:text="@string/rtl_p3" />
 
-			<TextView android:id="@+id/rtl_p3" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_p21" android:layout_marginTop="36dp"
-				android:layout_marginLeft="32dp"
-				android:text="@string/rtl_p3"
-				android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_p31"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_p3"
+                android:text="@string/rtl_p31" />
+        </RelativeLayout>
 
-			<TextView android:id="@+id/rtl_p31" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_p3" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_p31"
-				android:textSize="18dp" android:alpha="0.6" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-		</RelativeLayout>
+            <TextView
+                android:id="@+id/rtl_assign_nfc_tag"
+                style="@style/register_tag_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/rtl_assign_nfc_tag" />
 
-		<RelativeLayout android:layout_width="match_parent"
-			android:layout_height="match_parent">
-		    
-		    <TextView android:id="@+id/rtl_assign_nfc_tag"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-				android:text="@string/rtl_assign_nfc_tag" android:textSize="30dp" />
-		    
-		    <TextView android:id="@+id/rtl_2_p1" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_assign_nfc_tag"
-				android:layout_marginLeft="32dp" android:layout_marginTop="29dp"
-				android:text="@string/rtl_2_p1" android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_2_p1"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_assign_nfc_tag"
+                android:text="@string/rtl_2_p1" />
 
-			<TextView android:id="@+id/rtl_2_p11" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_2_p1" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_2_p11"
-				android:textSize="18dp" android:alpha="0.6" />
-			
-		    <TextView android:id="@+id/rtl_2_p2" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_2_p11"
-				android:layout_marginLeft="32dp" android:layout_marginTop="29dp"
-				android:text="@string/rtl_2_p2" android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_2_p11"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_2_p1"
+                android:text="@string/rtl_2_p11" />
 
-			<TextView android:id="@+id/rtl_2_p21" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_2_p2" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_2_p21"
-				android:textSize="18dp" android:alpha="0.6" />
-			
-			<TextView android:id="@+id/rtl_2_p22" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_2_p21" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_2_p22"
-				android:textSize="18dp" android:alpha="0.6" />
+            <TextView
+                android:id="@+id/rtl_2_p2"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_2_p11"
+                android:text="@string/rtl_2_p2" />
 
-			<TextView android:id="@+id/textView8" android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:layout_alignParentBottom="true" android:gravity="right"
-				android:alpha="0.5" android:text="@string/next_after_nfc_read"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
-		</RelativeLayout>
-		<!-- -->
+            <TextView
+                android:id="@+id/rtl_2_p21"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_2_p2"
+                android:text="@string/rtl_2_p21" />
 
-		<RelativeLayout android:layout_width="match_parent"
-			android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/rtl_2_p22"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_2_p21"
+                android:text="@string/rtl_2_p22" />
 
-			<TextView android:id="@+id/rtl_summary"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-				android:text="@string/rtl_summary" android:textSize="30dp" />
-		    
-		    <TextView android:id="@+id/rtl_3_p1" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_summary"
-				android:layout_marginLeft="32dp" android:layout_marginTop="29dp"
-				android:text="@string/rtl_3_p1" android:textSize="24dp" />
+            <TextView
+                android:id="@+id/rtl_2_next_after_nfc_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:alpha="0.5"
+                android:gravity="right"
+                android:text="@string/next_after_nfc_read"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
 
-			<TextView android:id="@+id/rtl_3_p11" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rtl_3_p1" android:layout_marginLeft="32dp"
-				android:layout_marginTop="5dp"
-				android:text="@string/rtl_3_p11"
-				android:textSize="18dp" android:alpha="0.6" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-			<Button android:id="@+id/button2" style="@style/button"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_alignParentBottom="true"
-				android:layout_alignParentRight="true" android:onClick="goToApp"
-				android:text="@string/go_to_app" />
+            <TextView
+                android:id="@+id/rtl_summary"
+                style="@style/register_tag_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/rtl_summary" />
 
-<!-- 			<Button android:id="@+id/button11" style="@style/button" -->
-<!-- 				android:layout_width="wrap_content" android:layout_height="wrap_content" -->
-<!-- 				android:layout_alignParentBottom="true" -->
-<!-- 				android:layout_alignParentLeft="true" android:onClick="goToScanAnotherTag" -->
-<!-- 				android:text="@string/scan_another_tag" /> -->
-		</RelativeLayout>
-	</ViewFlipper>
+            <TextView
+                android:id="@+id/rtl_3_p1"
+                style="@style/register_tag_bullet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_summary"
+                android:text="@string/rtl_3_p1" />
+
+            <TextView
+                android:id="@+id/rtl_3_p11"
+                style="@style/register_tag_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/rtl_3_p1"
+                android:text="@string/rtl_3_p11" />
+
+            <Button
+                android:id="@+id/button2"
+                style="@style/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:onClick="goToApp"
+                android:text="@string/go_to_app" />
+        </RelativeLayout>
+    </ViewFlipper>
 
 </RelativeLayout>

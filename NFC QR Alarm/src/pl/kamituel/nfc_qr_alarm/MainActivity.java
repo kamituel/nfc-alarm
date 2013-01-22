@@ -142,8 +142,10 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 
 		Calendar c = mPrefHelper.getAlarmDueIn();// getAlarmTime((int)mPrefHelper.getAlarmTimeCorrect());
 		
-		//c = Calendar.getInstance();
-		//c.add(Calendar.SECOND, 5);
+		if ( Utils.TEST_ALARM_TIME ) {
+			c = Calendar.getInstance();
+			c.add(Calendar.SECOND, 5);
+		}
 
 		Log.d(TAG, "Alarm set to "+TimeUtils.toStr(c.getTime()));
 

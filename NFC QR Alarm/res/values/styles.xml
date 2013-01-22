@@ -1,9 +1,33 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="android:Theme.Holo" />
 
-    <style name="button" parent="android:Widget.Holo.Button">
-        <item name="android:paddingLeft">30dp</item>
-        <item name="android:paddingRight">30dp</item>
+    <style name="button" parent="@style/base_button">        
+    </style>
+    
+    <style name="register_tag_view_flipper" parent="@style/base_register_tag_view_flipper">
+    </style>
+    
+    <style name="register_tag_title" parent="@style/base_register_tag_title">
+    </style>
+    
+    <style name="register_tag_bullet" parent="@style/base_register_tag_bullet">
+    </style>
+    
+    <style name="register_tag_details" parent="@style/base_register_tag_details">
+    </style>
+    
+    <style name="clock_surface" parent="@style/base_clock_surface">
+    </style>
+    
+    <style name="main_wake_up_at" parent="@style/base_main_wake_up_at">
+    </style>
+    <style name="main_wake_up_time" parent="@style/base_main_wake_up_time">
+    </style>
+    <style name="main_wake_up_time_of_day" parent="@style/base_main_wake_up_time_of_day">
+    </style>
+    <style name="main_time_of_day_spinner" parent="@style/base_main_time_of_day_spinner"></style>
+    
+    <style name="main_layout" parent="@style/base_main_layout">
     </style>
 </resources>

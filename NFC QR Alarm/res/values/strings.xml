@@ -60,4 +60,8 @@
     <string name="no_nfc_d_desc">NFC is required for this alarm clock to work.\n\nPlease go to the system settings and enable NFC.</string>
     <string name="no_nfc_open_settings">Open settings</string>
     <string name="no_nfc_close_alarm_clock">Close this app</string>
+    
+    <string name="no_nfc_present_title">Device not supported</string>
+    <string name="no_nfc_present_desc">Your device has no NFC technology.\n\nUnfortunately, it is required to use this app.</string>
+    <string name="no_nfc_present_quit">Quit</string>
 </resources>

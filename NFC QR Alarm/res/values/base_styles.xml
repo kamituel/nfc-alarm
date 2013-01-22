@@ -1,0 +1,72 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppTheme" parent="android:Theme.Holo" />
+
+    <style name="base_button" parent="android:Widget.Holo.Button">
+        <item name="android:paddingLeft">@dimen/button_padding_left</item>
+        <item name="android:paddingRight">@dimen/button_padding_right</item>
+        <item name="android:paddingTop">@dimen/button_padding_top</item>
+        <item name="android:paddingBottom">@dimen/button_padding_bottom</item>
+    </style>
+    
+    <style name="base_register_tag_view_flipper">
+        <item name="android:paddingLeft">@dimen/rt_padding_left</item>
+        <item name="android:paddingRight">@dimen/rt_padding_right</item>
+        <item name="android:paddingTop">@dimen/rt_padding_top</item>
+        <item name="android:paddingBottom">@dimen/rt_padding_bottom</item>
+    </style>
+    
+    <style name="base_register_tag_title" parent="android:Widget.Holo.TextView">
+        <item name="android:textSize">@dimen/rt_title_text_size</item>
+    </style>
+    
+    <style name="base_register_tag_bullet" parent="android:Widget.Holo.TextView">
+        <item name="android:layout_marginLeft">@dimen/rt_list_title_margin_left</item>
+        <item name="android:layout_marginTop">@dimen/rt_list_title_margin_top</item>
+        <item name="android:textSize">@dimen/rt_list_title_text_size</item>
+    </style>
+    
+    <style name="base_register_tag_details" parent="android:Widget.Holo.TextView">
+        <item name="android:alpha">0.6</item>
+        <item name="android:layout_marginLeft">@dimen/rt_list_details_margin_left</item>
+        <item name="android:layout_marginTop">@dimen/rt_list_details_margin_top</item>
+        <item name="android:textSize">@dimen/rt_list_details_text_size</item>
+    </style>
+    
+    <style name="base_clock_surface">
+        <item name="android:layout_marginLeft">@dimen/m_clock_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/m_clock_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/m_clock_margin_top</item>
+    </style>
+    
+    <style name="base_main_wake_up_at" parent="android:Widget.Holo.TextView">
+        <item name="android:alpha">0.6</item>
+        <item name="android:textSize">@dimen/m_wake_up_at_text_size</item>
+    </style>
+    <style name="base_main_wake_up_time" parent="android:Widget.Holo.TextView">
+        <item name="android:layout_marginLeft">@dimen/m_wake_up_time_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/m_wake_up_time_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/m_wake_up_time_margin_top</item>
+        <item name="android:textSize">@dimen/m_wake_up_time_text_size</item>
+        <item name="android:width">@dimen/m_wake_up_time_width</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="base_main_wake_up_time_of_day">
+        <item name="android:alpha">0.6</item>
+        <item name="android:textSize">@dimen/m_wake_up_in_the_text_size</item>
+        <item name="android:layout_marginTop">@dimen/m_wake_up_in_the_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/m_wake_up_in_the_margin_bottom</item>
+    </style>
+    <style name="base_main_time_of_day_spinner">
+        <item name="android:alpha">0.6</item>
+        <item name="android:textSize">@dimen/m_wake_up_in_the_text_size</item>
+    	<item name="android:textColor">#ffffff</item>
+    </style>
+    
+    <style name="base_main_layout">
+        <item name="android:paddingLeft">@dimen/m_padding_left</item>
+        <item name="android:paddingRight">@dimen/m_padding_right</item>
+        <item name="android:paddingTop">@dimen/m_padding_top</item>
+        <item name="android:paddingBottom">@dimen/m_padding_bottom</item>
+    </style>
+</resources>

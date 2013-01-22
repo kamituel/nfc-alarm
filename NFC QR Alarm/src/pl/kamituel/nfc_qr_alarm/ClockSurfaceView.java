@@ -29,7 +29,6 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	
 	private int mCanvasWidth = 0;
 	private int mCanvasHeight = 0;
-	private final static int MARGIN = 80;
 	private int x, y, w, h, cx, cy;
 	
 	private RectF mOuterCircle = null;
@@ -345,10 +344,11 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		//mClockBounds = new Rect(MARGIN, MARGIN, w-MARGIN, w-MARGIN);
 		mCanvasWidth = cw;
 		mCanvasHeight = ch;
-		w = mCanvasWidth - 2*MARGIN;
-		h = mCanvasHeight - 2*MARGIN;
-		x = MARGIN;
-		y = MARGIN;
+		int margin = cw * 1 / 7;
+		w = mCanvasWidth - 2*margin;
+		h = mCanvasHeight - 2*margin;
+		x = margin;
+		y = margin;
 		cx = x + w/2;
 		cy = y + h/2;
 		

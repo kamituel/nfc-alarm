@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    android:padding="40dp" >
-
+    style="@style/main_layout" >
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,50 +13,23 @@
 
         <TextView
             android:id="@+id/wakupatTV"
+            style="@style/main_wake_up_at"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:alpha="0.6"
             android:gravity="center"
-            android:text="@string/wake_up_tommorow_at"
-            android:textSize="24dp" />
+            android:text="@string/wake_up_tommorow_at" />
 
         <TextView
             android:id="@+id/timeTV"
+            style="@style/main_wake_up_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/wakupatTV"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:textSize="42dip" />
-
-        <!-- <TextView
-            android:id="@+id/morningTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/timeTV"
-            android:alpha="0.6"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:text="@string/morning"
-            android:textSize="24dp" />-->
-        
-                <Spinner android:id="@+id/timeofdayList"
-            android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/timeTV"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:textSize="24dp"
-        android:alpha="0.6">
-        </Spinner>
-
+            android:text="" />
 
         <Button
             android:id="@+id/enableAlarmBtn"
@@ -64,18 +37,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
-            android:onClick="setAlarm"
             android:layout_below="@+id/timeofdayList"
+            android:onClick="setAlarm"
             android:text="" />
+
+        <Spinner
+            android:id="@+id/timeofdayList"
+            style="@style/main_wake_up_time_of_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/timeTV"
+            android:gravity="center" />
     </RelativeLayout>
 
     <pl.kamituel.nfc_qr_alarm.ui.SquareRelativeLayout
+        style="@style/clock_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp" >
+        android:layout_weight="0.5" >
 
         <pl.kamituel.nfc_qr_alarm.ClockSurfaceView
             android:id="@+id/clock"

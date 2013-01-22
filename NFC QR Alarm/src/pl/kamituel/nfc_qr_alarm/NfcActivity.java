@@ -16,20 +16,25 @@ import android.util.Log;
 
 public abstract class NfcActivity extends Activity {
 	private final static String TAG = NfcActivity.class.getSimpleName();
-	
-	//public final static String NFC_BROADCAST = "pl.kamituel.nfc_qr_alarm.tag";
-	
-	protected abstract void tagReceived (String tagId);
 	private AlertDialog mNoNfcDialog = null;
 	
+	protected abstract void tagReceived (String tagId);
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		if ( !isNfcEnabled() ) {
-			mNoNfcDialog = buildNoNfcWarning();
-			mNoNfcDialog.show();
+
+		if ( !Utils.RUNS_IN_EMULATOR ) {
+			if ( !isNfcPresent() ) {
+				// should never happen as google play store filters for this.
+				// but may be useful when installing from APK file.
+				alertNoNfc();
+			}
+
+			if ( !isNfcEnabled() ) {
+				mNoNfcDialog = buildNoNfcWarning();
+				mNoNfcDialog.show();
+			}
 		}
 	}
 
@@ -47,8 +52,10 @@ public abstract class NfcActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
-		NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-		nfcAdapter.disableForegroundDispatch(this);
+		if ( !Utils.RUNS_IN_EMULATOR ) {
+			NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+			nfcAdapter.disableForegroundDispatch(this);
+		}
 		
 		Log.d(TAG, "onPause(): NFC listen off");
 	}
@@ -57,36 +64,19 @@ public abstract class NfcActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-//		Log.d(TAG, "Setting up NFC");
-//		
-//		Intent i = new Intent();
-//		i.setAction(NFC_BROADCAST);
-//		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
-//		
-//		IntentFilter intF = new IntentFilter();
-//		intF.addAction(NFC_BROADCAST);
-//		registerReceiver(new BroadcastReceiver() {
-//			@Override
-//			public void onReceive(Context context, Intent intent) {
-//				Log.d(TAG, "asdasdasdasd");
-//				Iterator<String> it = intent.getExtras().keySet().iterator();
-//				while ( it.hasNext() ) Log.d(TAG, "  extr: "+it.next());
-//			}
-//		}, intF);
-		
-		Intent i = new Intent(this, getClass());
-		i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		//new Intent(this,
-                //WakeUpActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-		if ( nfcAdapter == null ) { 
-			Log.e(TAG, "NFC adapter null. NFC listen off"); 
-			return; 
+		if ( !Utils.RUNS_IN_EMULATOR ) {
+			Intent i = new Intent(this, getClass());
+			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+			if ( nfcAdapter == null ) { 
+				Log.e(TAG, "NFC adapter null. NFC listen off"); 
+				return; 
+			}
+			nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
 		}
-		nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
-		
+
 		Log.d(TAG, "onResume(): NFC listen on");
 	}
 	
@@ -149,6 +139,24 @@ public abstract class NfcActivity extends Activity {
 		NfcManager manager = (NfcManager) this.getSystemService(Context.NFC_SERVICE);
 		NfcAdapter adapter = manager.getDefaultAdapter();
 		return ( adapter != null && adapter.isEnabled() );
+	}
+	
+	private boolean isNfcPresent () {
+		NfcManager manager = (NfcManager) this.getSystemService(Context.NFC_SERVICE);
+		return ( manager.getDefaultAdapter() != null );
+	}
+	
+	protected void alertNoNfc () {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setTitle(R.string.no_nfc_present_title)
+		.setIcon(R.drawable.alerts_and_states_error)
+		.setMessage(R.string.no_nfc_present_desc)
+		.setNegativeButton(R.string.no_nfc_present_quit, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		}).create().show();
 	}
 	
 	protected AlertDialog buildNoNfcWarning () {

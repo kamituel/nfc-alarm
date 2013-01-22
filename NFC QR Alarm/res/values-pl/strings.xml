@@ -55,4 +55,13 @@
         <item>rano</item>
         <item>po południu</item>
     </string-array>
+    
+    <string name="no_nfc_d_title">Wyłączone NFC</string>
+    <string name="no_nfc_d_desc">NFC jest potrzebne.\n\nPrzejdź do ustawień systemu i włącz NFC.</string>
+    <string name="no_nfc_open_settings">Otwórz ustawienia</string>
+    <string name="no_nfc_close_alarm_clock">Zamknij aplikację</string>
+    
+    <string name="no_nfc_present_title">Nie wspierane urządzenie</string>
+    <string name="no_nfc_present_desc">To urządzenie nie posiada modułu NFC.\n\nNiestety, jest on konieczny do korzystania z aplikacji.</string>
+    <string name="no_nfc_present_quit">Zamknij aplikację</string>
 </resources>

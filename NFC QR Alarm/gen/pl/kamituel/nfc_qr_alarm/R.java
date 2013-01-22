@@ -15,7 +15,7 @@ public final class R {
         public static final int out_right=0x7f040003;
     }
     public static final class array {
-        public static final int time_of_day=0x7f080000;
+        public static final int time_of_day=0x7f0a0000;
     }
     public static final class attr {
     }
@@ -23,44 +23,108 @@ public final class R {
         public static final int ga_autoActivityTracking=0x7f060000;
         public static final int ga_reportUncaughtExceptions=0x7f060001;
     }
+    public static final class dimen {
+        public static final int button_padding_bottom=0x7f080003;
+        /**  Common part 
+         */
+        public static final int button_padding_left=0x7f080000;
+        public static final int button_padding_right=0x7f080001;
+        public static final int button_padding_top=0x7f080002;
+        public static final int button_text_size=0x7f080004;
+        /**       clock canvas 
+         */
+        public static final int m_clock_margin_left=0x7f080014;
+        public static final int m_clock_margin_right=0x7f080015;
+        public static final int m_clock_margin_top=0x7f080016;
+        public static final int m_padding_bottom=0x7f080013;
+        /**   Main View 
+      layout padding 
+         */
+        public static final int m_padding_left=0x7f080010;
+        public static final int m_padding_right=0x7f080011;
+        public static final int m_padding_top=0x7f080012;
+        /**       "wake up at TIME in the morning" elements 
+         */
+        public static final int m_wake_up_at_text_size=0x7f080017;
+        public static final int m_wake_up_in_the_margin_bottom=0x7f08001f;
+        public static final int m_wake_up_in_the_margin_top=0x7f08001e;
+        public static final int m_wake_up_in_the_text_size=0x7f08001d;
+        public static final int m_wake_up_time_margin_left=0x7f08001a;
+        public static final int m_wake_up_time_margin_right=0x7f08001b;
+        public static final int m_wake_up_time_margin_top=0x7f08001c;
+        public static final int m_wake_up_time_text_size=0x7f080018;
+        public static final int m_wake_up_time_width=0x7f080019;
+        public static final int rt_list_details_margin_left=0x7f08000d;
+        public static final int rt_list_details_margin_top=0x7f08000e;
+        public static final int rt_list_details_text_size=0x7f08000f;
+        public static final int rt_list_title_margin_left=0x7f08000b;
+        public static final int rt_list_title_margin_top=0x7f08000c;
+        public static final int rt_list_title_text_size=0x7f08000a;
+        public static final int rt_padding_bottom=0x7f080008;
+        /**  Register Tag View 
+     layout padding 
+         */
+        public static final int rt_padding_left=0x7f080005;
+        /**  Common part 
+ Register Tag View 
+         */
+        public static final int rt_padding_right=0x7f080006;
+        /**  Common part 
+ Register Tag View 
+         */
+        public static final int rt_padding_top=0x7f080007;
+        /**      title, list items and details 
+         */
+        public static final int rt_title_text_size=0x7f080009;
+        public static final int w_good_morning_text_size=0x7f080022;
+        /**   Wake Up View 
+ Common part 
+ Register Tag View 
+  Main View 
+  Wake Up View 
+         */
+        public static final int w_snooze_progress_margin_left=0x7f080020;
+        public static final int w_snooze_progress_margin_right=0x7f080021;
+    }
     public static final class drawable {
         public static final int alerts_and_states_error=0x7f020000;
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int attribution=0x7f070020;
-        public static final int button1=0x7f070007;
-        public static final int button2=0x7f070019;
-        public static final int clock=0x7f070001;
-        public static final int clock_time_on_previous_touch=0x7f070000;
-        public static final int enableAlarmBtn=0x7f070003;
-        public static final int goodMorning1TV=0x7f07001c;
-        public static final int goodMorningTV=0x7f07001b;
-        public static final int introFlipper=0x7f070006;
-        public static final int reset=0x7f07001f;
-        public static final int rtl_2_p1=0x7f070010;
-        public static final int rtl_2_p11=0x7f070011;
-        public static final int rtl_2_p2=0x7f070012;
-        public static final int rtl_2_p21=0x7f070013;
-        public static final int rtl_2_p22=0x7f070014;
-        public static final int rtl_3_p1=0x7f070017;
-        public static final int rtl_3_p11=0x7f070018;
-        public static final int rtl_assign_nfc_tag=0x7f07000f;
-        public static final int rtl_how_it_works_TV=0x7f070008;
-        public static final int rtl_p1=0x7f070009;
-        public static final int rtl_p11=0x7f07000a;
-        public static final int rtl_p2=0x7f07000b;
-        public static final int rtl_p21=0x7f07000c;
-        public static final int rtl_p3=0x7f07000d;
-        public static final int rtl_p31=0x7f07000e;
-        public static final int rtl_summary=0x7f070016;
-        public static final int snoozeBTN=0x7f07001e;
-        public static final int snoozePB=0x7f07001d;
-        public static final int textView8=0x7f070015;
-        public static final int timeOfDayTV=0x7f07001a;
-        public static final int timeTV=0x7f070002;
-        public static final int timeofdayList=0x7f070005;
-        public static final int wakupatTV=0x7f070004;
+        public static final int attribution=0x7f090021;
+        public static final int button1=0x7f090008;
+        public static final int button2=0x7f09001a;
+        public static final int clock=0x7f090001;
+        public static final int clock_time_on_previous_touch=0x7f090000;
+        public static final int enableAlarmBtn=0x7f090003;
+        public static final int goodMorning1TV=0x7f09001d;
+        public static final int goodMorningTV=0x7f09001c;
+        public static final int introFlipper=0x7f090007;
+        public static final int reset=0x7f090020;
+        public static final int rtl_2_next_after_nfc_scan=0x7f090016;
+        public static final int rtl_2_p1=0x7f090011;
+        public static final int rtl_2_p11=0x7f090012;
+        public static final int rtl_2_p2=0x7f090013;
+        public static final int rtl_2_p21=0x7f090014;
+        public static final int rtl_2_p22=0x7f090015;
+        public static final int rtl_3_p1=0x7f090018;
+        public static final int rtl_3_p11=0x7f090019;
+        public static final int rtl_assign_nfc_tag=0x7f090010;
+        public static final int rtl_how_it_works_TV=0x7f090009;
+        public static final int rtl_p1=0x7f09000a;
+        public static final int rtl_p11=0x7f09000b;
+        public static final int rtl_p2=0x7f09000c;
+        public static final int rtl_p21=0x7f09000d;
+        public static final int rtl_p3=0x7f09000e;
+        public static final int rtl_p31=0x7f09000f;
+        public static final int rtl_summary=0x7f090017;
+        public static final int snoozeBTN=0x7f09001f;
+        public static final int snoozePB=0x7f09001e;
+        public static final int timeOfDayTV=0x7f09001b;
+        public static final int timeTV=0x7f090005;
+        public static final int timeofdayList=0x7f090006;
+        public static final int wake_up_topbar=0x7f090002;
+        public static final int wakupatTV=0x7f090004;
     }
     public static final class layout {
         public static final int main_layout=0x7f030000;
@@ -69,7 +133,7 @@ public final class R {
         public static final int wake_up_activity=0x7f030003;
     }
     public static final class menu {
-        public static final int menu=0x7f0a0000;
+        public static final int menu=0x7f0b0000;
     }
     public static final class string {
         public static final int alarm_due_in=0x7f050023;
@@ -95,6 +159,9 @@ public final class R {
         public static final int no_nfc_d_desc=0x7f05002c;
         public static final int no_nfc_d_title=0x7f05002b;
         public static final int no_nfc_open_settings=0x7f05002d;
+        public static final int no_nfc_present_desc=0x7f050030;
+        public static final int no_nfc_present_quit=0x7f050031;
+        public static final int no_nfc_present_title=0x7f05002f;
         public static final int press_nfc_to_disable=0x7f050020;
         public static final int register_tag_help=0x7f050003;
         public static final int register_tag_help2=0x7f050004;
@@ -121,7 +188,28 @@ public final class R {
         public static final int welcome_activity_name=0x7f050001;
     }
     public static final class style {
-        public static final int AppTheme=0x7f090000;
-        public static final int button=0x7f090001;
+        public static final int AppTheme=0x7f070000;
+        public static final int base_button=0x7f070001;
+        public static final int base_clock_surface=0x7f070006;
+        public static final int base_main_layout=0x7f07000b;
+        public static final int base_main_time_of_day_spinner=0x7f07000a;
+        public static final int base_main_wake_up_at=0x7f070007;
+        public static final int base_main_wake_up_time=0x7f070008;
+        public static final int base_main_wake_up_time_of_day=0x7f070009;
+        public static final int base_register_tag_bullet=0x7f070004;
+        public static final int base_register_tag_details=0x7f070005;
+        public static final int base_register_tag_title=0x7f070003;
+        public static final int base_register_tag_view_flipper=0x7f070002;
+        public static final int button=0x7f07000c;
+        public static final int clock_surface=0x7f070011;
+        public static final int main_layout=0x7f070016;
+        public static final int main_time_of_day_spinner=0x7f070015;
+        public static final int main_wake_up_at=0x7f070012;
+        public static final int main_wake_up_time=0x7f070013;
+        public static final int main_wake_up_time_of_day=0x7f070014;
+        public static final int register_tag_bullet=0x7f07000f;
+        public static final int register_tag_details=0x7f070010;
+        public static final int register_tag_title=0x7f07000e;
+        public static final int register_tag_view_flipper=0x7f07000d;
     }
 }

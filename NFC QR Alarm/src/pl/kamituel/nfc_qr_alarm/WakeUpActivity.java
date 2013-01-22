@@ -8,22 +8,41 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
-public class WakeUpActivity extends NfcActivity /*implements ServiceConnection*/ {
+public class WakeUpActivity extends NfcActivity {
 	private static final String TAG = WakeUpActivity.class.getSimpleName();
-
 	private final static int SNOOZE_TIME_SEC = 20;
+	
 	private WakeLock mWakeLock = null;
-	
 	private Handler mSnoozeHandler = new Handler();
-	
 	private PrefHelper mPrefHelper = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.wake_up_activity);
+		mPrefHelper = new PrefHelper(getApplicationContext());
+		
+		acquireWakeLock();
+
+		if ( Utils.RUNS_IN_EMULATOR ) {
+			TextView v = (TextView) findViewById(R.id.goodMorning1TV);
+			v.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					sendCommand(WakeUpService.CMD_STOP_ALARM);
+				}
+			});
+		}
+	}
 	
 	@Override
 	protected void tagReceived(String tagId) {
@@ -92,28 +111,6 @@ public class WakeUpActivity extends NfcActivity /*implements ServiceConnection*/
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.wake_up_activity);
-	
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TRAININGCOUNTDOWN");
-		mWakeLock.acquire();
-		if (!mWakeLock.isHeld()) {
-			Log.e(TAG, "mWakeLock not acquired");
-		}
-
-		getWindow().addFlags(
-				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON 
-				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-				| WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
-		
-		mPrefHelper = new PrefHelper(getApplicationContext());
-	}
-
-	@Override
 	protected void onStart() {
 		super.onStart();
 		
@@ -124,15 +121,7 @@ public class WakeUpActivity extends NfcActivity /*implements ServiceConnection*/
 	protected void onStop() {
 		super.onStop();
 
-//		NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-//		nfcAdapter.disableForegroundDispatch(this);
-
-		try {
-			mWakeLock.release();
-		} catch (RuntimeException e) {
-			Log.e(TAG, "mWakeLock", e);
-		}
-		
+		releaseWakeLock();
 		EasyTracker.getInstance().activityStop(this);
 	}
 	
@@ -156,17 +145,29 @@ public class WakeUpActivity extends NfcActivity /*implements ServiceConnection*/
 		i.putExtra(WakeUpService.COMMAND, cmd);
 		startService(i);
 	}
+	
+	private final void acquireWakeLock () {
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TRAININGCOUNTDOWN");
+		mWakeLock.acquire();
+		if (!mWakeLock.isHeld()) {
+			Log.e(TAG, "mWakeLock not acquired");
+		}
+		
+		getWindow().addFlags(
+				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON 
+				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+				| WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+	}
+	
+	private final void releaseWakeLock () {
+		try {
+			mWakeLock.release();
+		} catch (RuntimeException e) {
+			Log.e(TAG, "mWakeLock", e);
+		}
+	}
 
-
-//	@Override
-//	public void onServiceConnected(ComponentName arg0, IBinder binder) {
-//		Log.d(TAG, "WakeUpService connected");
-//		mAlarmService = (WakeUpService.Binder) binder;
-//		mAlarmService.startAlarm();
-//	}
-//
-//	@Override
-//	public void onServiceDisconnected(ComponentName name) {
-//		
-//	}
 }

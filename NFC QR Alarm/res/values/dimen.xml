@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common part -->
+    <dimen name="button_padding_left">20dp</dimen>
+    <dimen name="button_padding_right">20dp</dimen>
+    <dimen name="button_padding_top">0dp</dimen>
+    <dimen name="button_padding_bottom">0dp</dimen>
+    <dimen name="button_text_size">20dp</dimen>
+    
+    <!-- Register Tag View -->
+    <!--     layout padding -->
+    <dimen name="rt_padding_left">15dp</dimen>
+	<dimen name="rt_padding_right">10dp</dimen>
+    <dimen name="rt_padding_top">20dp</dimen>
+    <dimen name="rt_padding_bottom">10dp</dimen>
+	<!--     title, list items and details -->
+    <dimen name="rt_title_text_size">22dp</dimen>
+    <dimen name="rt_list_title_text_size">18dp</dimen>
+    <dimen name="rt_list_title_margin_left">16dp</dimen>
+    <dimen name="rt_list_title_margin_top">16dp</dimen>
+    <dimen name="rt_list_details_margin_left">16dp</dimen>
+    <dimen name="rt_list_details_margin_top">0dp</dimen>
+    <dimen name="rt_list_details_text_size">14dp</dimen>
+    
+    <!--  Main View -->
+    <!--      layout padding -->
+    <dimen name="m_padding_left">20dp</dimen>
+    <dimen name="m_padding_right">20dp</dimen>
+    <dimen name="m_padding_top">30dp</dimen>
+    <dimen name="m_padding_bottom">20dp</dimen>
+    <!--      clock canvas -->
+    <dimen name="m_clock_margin_left">0dp</dimen>
+    <dimen name="m_clock_margin_right">0dp</dimen>
+    <dimen name="m_clock_margin_top">10dp</dimen>
+    <!--      "wake up at TIME in the morning" elements -->
+    <dimen name="m_wake_up_at_text_size">14dp</dimen>
+    <dimen name="m_wake_up_time_text_size">22dp</dimen>
+    <dimen name="m_wake_up_time_width">70dp</dimen>
+    <dimen name="m_wake_up_time_margin_left">5dp</dimen>
+    <dimen name="m_wake_up_time_margin_right">5dp</dimen>
+    <dimen name="m_wake_up_time_margin_top">0dp</dimen>
+    <dimen name="m_wake_up_in_the_text_size">14dp</dimen>
+    <dimen name="m_wake_up_in_the_margin_top">0dp</dimen>
+    <dimen name="m_wake_up_in_the_margin_bottom">0dp</dimen>
+
+    
+    <!--  Wake Up View -->
+	<dimen name="w_snooze_progress_margin_left">20dp</dimen>
+	<dimen name="w_snooze_progress_margin_right">20dp</dimen>
+	<dimen name="w_good_morning_text_size">30dp</dimen>
+</resources>

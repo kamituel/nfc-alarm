@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -26,6 +28,17 @@ public class RegisterTagActivity extends NfcActivity {
 		mViewFlipper = (ViewFlipper) findViewById(R.id.introFlipper);
 		mViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
 		mViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_out));
+		
+		if ( Utils.RUNS_IN_EMULATOR ) {
+			TextView t = (TextView) findViewById(R.id.rtl_2_next_after_nfc_scan);
+			t.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mPrefHelper.saveTag("0");
+					mViewFlipper.showNext();
+				}
+			});
+		}
 	}
 
 	@Override
