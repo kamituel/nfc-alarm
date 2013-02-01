@@ -5,7 +5,6 @@ import java.io.IOException;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -31,7 +30,7 @@ public class WakeUpService extends Service {
 	public static final int CMD_SNOOZE_ALARM = 3;
 	public static final int CMD_UNSNOOZE_ALARM = 4;
 	
-	private PrefHelper mPrefHelper = null;
+	//private PrefHelper mPrefHelper = null;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -42,27 +41,28 @@ public class WakeUpService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
-		mPrefHelper = new PrefHelper(getApplicationContext());
+		Log.d(TAG, "onCreate()");
 	}
 	
-	private void goIntoForeground () {
+	private void goIntoForeground () {		
 		Intent startApp = new Intent(this, WakeUpActivity.class);
 		startApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		NotificationManager ns = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		PendingIntent ci = PendingIntent.getActivity(this, 0, startApp, PendingIntent.FLAG_UPDATE_CURRENT);
-		Notification n = new Notification(R.drawable.ic_launcher, getResources().getString(R.string.good_morning_sunshine), System.currentTimeMillis());
-		n.setLatestEventInfo(this, getResources().getString(R.string.welcome_activity_name), getResources().getString(R.string.press_nfc_to_disable), ci);
-		startForeground(
-				17676,
-				n
-				);
+		
+		 Notification notification = new Notification.Builder(getApplicationContext())
+         .setContentTitle(getResources().getString(R.string.welcome_activity_name))
+         .setContentText(getResources().getString(R.string.good_morning_sunshine))
+         .setSmallIcon(R.drawable.ic_launcher)
+         .setContentIntent(ci)
+         .getNotification();
+
+		startForeground(17676, notification);
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		int command = intent.getExtras().getInt(COMMAND);
-		Log.d(TAG, "Command: "+command);
+		Log.d(TAG, "onStartCommand(): Command: "+command);
 
 		switch ( command ) {
 		case CMD_START_ALARM:
@@ -80,7 +80,12 @@ public class WakeUpService extends Service {
 			} else Log.i(TAG, "Not starting service - already running");
 			
 			Log.d(TAG, "Setting alarm disabled");
-			mPrefHelper.setAlarmOn(false);
+
+			AlarmMgmt alarmMgmt = new AlarmMgmt(getApplicationContext());
+			alarmMgmt.restore();
+			alarmMgmt.getSelectedAlarm().setEnabled(false);
+			alarmMgmt.persist();
+			
 			
 			break;
 		case CMD_STOP_ALARM:
@@ -100,7 +105,7 @@ public class WakeUpService extends Service {
 			Log.w(TAG, "Unrecognized command "+command);
 		}
 
-		return Service.START_STICKY;
+		return Service.START_NOT_STICKY;
 	}
 
 
@@ -163,6 +168,12 @@ public class WakeUpService extends Service {
 				0);
 	}
 	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.d(TAG, "onDestroy()");
+	}
+
 	public static boolean isRunning(Context ctx) {
 	    ActivityManager manager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
 	    

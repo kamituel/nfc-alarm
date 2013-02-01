@@ -46,8 +46,6 @@ public abstract class NfcActivity extends Activity {
 		if ( mNoNfcDialog != null ) mNoNfcDialog.dismiss();
 	}
 
-
-
 	@Override
 	protected void onPause() {
 		super.onPause();

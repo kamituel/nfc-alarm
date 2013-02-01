@@ -1,24 +1,15 @@
 package pl.kamituel.nfc_qr_alarm;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import pl.kamituel.nfc_qr_alarm.ClockSurfaceView.AlarmListener;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,24 +27,33 @@ import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
-public class MainActivity extends Activity implements OnGlobalLayoutListener, AlarmListener, OnItemSelectedListener {
+public class MainActivity extends Activity implements OnGlobalLayoutListener, OnItemSelectedListener, AlarmTime.Observer {
 	private final static String TAG = MainActivity.class.getSimpleName();
+	
 	private ClockSurfaceView mClock = null;
 	private TextView mTime = null;
 	private PrefHelper mPrefHelper = null;
 	private Spinner mTimeOfDay = null;
 	
-	private static final boolean DEVELOPER_MODE = false;
+	private AlarmMgmt mAlarmMgmt = null;
+	
+	private Handler mTimeOfDaySpinnerHandler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "onCreate()");
 		
-		if ( DEVELOPER_MODE ) setDeveloperMode();
+		if ( Utils.DEVELOPER_MODE ) Utils.setDeveloperMode();
+		Utils.logDeviceInfo(this);
 		
-		logDeviceInfo();
-		
+		mAlarmMgmt = new AlarmMgmt(getApplicationContext());
 		mPrefHelper = new PrefHelper(getApplicationContext());
+		
+		/**
+		 * If there is no NFC tag (ex. first launch), 
+		 * open RegisterTagActivity and finish.
+		 */
 		if ( mPrefHelper.getTag() == null ) {
 			Intent i = new Intent(getApplicationContext(), RegisterTagActivity.class);
 			startActivity(i);
@@ -63,11 +63,15 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 		
 		setContentView(R.layout.main_layout);
 
+		buildActivityUi();
+	}
+	
+	private void buildActivityUi () {
         mClock = (ClockSurfaceView) findViewById(R.id.clock);
+        mClock.setAlarmDataProvider(mAlarmMgmt);
         mTime = (TextView) findViewById(R.id.timeTV);
 
         mClock.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        mClock.setAlarmListener(this);
         
         mTime.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -82,8 +86,6 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
         timeOfDayData.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeOfDay.setAdapter(timeOfDayData);
         mTimeOfDay.setOnItemSelectedListener(this);
-        
-
 	}
 	
 	@Override
@@ -99,114 +101,50 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 			finish();
 		}
 		
-		refreshAlarmUi();
-		
-		long alarmTime = mPrefHelper.getAlarmTimeCorrect();
-        Date alarm = TimeUtils.getTimeFromSecondsFromMidnight((int)alarmTime);
-        mTime.setText(TimeUtils.getTimeFormatted(alarm));
-        
-        mTimeOfDay.setSelection(mPrefHelper.getAlarmInTheMorning() ? 0 : 1);
+		mAlarmMgmt.restore();
+		if ( mAlarmMgmt.getAlarms().size() == 0 ) {
+			AlarmTime defaultAlarm = new AlarmTime();
+			defaultAlarm.set((int) PrefHelper.ALARM_TIME_DEFAULT);
+			defaultAlarm.setEnabled(false);
+			mAlarmMgmt.addAlarm(defaultAlarm, true);
+			mAlarmMgmt.commit();
+		}
+		mAlarmMgmt.getSelectedAlarm().addObserver(this);
+
+		refreshInterfaceTime();
+		refreshInterfaceTimeOfDay();
+		refreshInterfaceEnabled();
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		EasyTracker.getInstance().activityStart(this);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		
-		EasyTracker.getInstance().activityStop(this);
-	}	
 
 	public void setAlarm (View v) {
-		Log.d(TAG, "Setting an alarm or disabling it");
+		Log.d(TAG, "setAlarm(): Setting an alarm or disabling it");
 		
-		mPrefHelper.setAlarmOn(!mPrefHelper.getAlarmOn());
-		refreshAlarmUi();
-
-		int command = mPrefHelper.getAlarmOn() ? WakeUpService.CMD_START_ALARM : WakeUpService.CMD_EMPTY;
+		boolean alarmOn = !mAlarmMgmt.getSelectedAlarm().getEnabled();
+		mAlarmMgmt.getSelectedAlarm().setEnabled(alarmOn);
+		mAlarmMgmt.commit();
+		
+		Intent triggerAlarmService = new Intent(getApplicationContext(), AlarmTrigger.class);
+		startService(triggerAlarmService);	
+		
+		/*int command = alarmOn ? WakeUpService.CMD_START_ALARM : WakeUpService.CMD_EMPTY;
 		
 		Intent intent = new Intent(this, WakeUpService.class);
 		intent.putExtra(WakeUpService.COMMAND, command);
 		PendingIntent pendingIntent = PendingIntent.getService(
 				this, 12345, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-		Calendar c = mPrefHelper.getAlarmDueIn();// getAlarmTime((int)mPrefHelper.getAlarmTimeCorrect());
 		
-		if ( Utils.TEST_ALARM_TIME ) {
-			c = Calendar.getInstance();
-			c.add(Calendar.SECOND, 5);
-		}
-
-		Log.d(TAG, "Alarm set to "+TimeUtils.toStr(c.getTime()));
-
+		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+		int countdown = alarm.getCountdown();
+		Log.d(TAG, "Alarm rings in "+TimeUtils.formatSeconds(countdown));
+		
 		AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+		am.set(AlarmManager.RTC_WAKEUP, alarm.getAbsolute()*1000, pendingIntent);*/
 	}
 
 	@Override
 	public void onGlobalLayout() {
-        long alarmTime = mPrefHelper.getAlarmTime();
-        
-        float angle = ((float)alarmTime)/(12*3600)*360;
-        Log.d(TAG, "Restoring alarm time to "+alarmTime+". Angle is "+angle);
-        mClock.setAngle(angle);
-	}
-
-	@Override
-	public void onAlarmChanged(int secondsTill12) {
-		Date alarm = TimeUtils.getTimeFromSecondsFromMidnight(secondsTill12);
-		mTime.setText(TimeUtils.getTimeFormatted(alarm));
-
-		//mPrefHelper.setAlarmTime(secondsTill12);
-		mAlarmTimeCached = secondsTill12;
-	}
-	
-	private Handler mTimeOfDaySpinnerHandler = new Handler();
-	
-	@Override
-	public void onTimeOfDayChanged() {
-		Log.d(TAG, "TIme of day of alarm changed.");
-		final boolean am = !(mTimeOfDay.getSelectedItemPosition() == 0);
-		
-		mTimeOfDaySpinnerHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				mTimeOfDay.setSelection(am ? 0 : 1, false);		
-			}
-		});
-		
-		mPrefHelper.setAlarmInTheMorning(am);
-	}
-	
-	private int mAlarmTimeCached = -1;
-	@Override
-	public void commit() {
-		Log.d(TAG, "Commig alarm settings");
-		mPrefHelper.setAlarmTime(mAlarmTimeCached);
-	}
-	
-	private void refreshAlarmUi () {
-		Button enableBtn = (Button) findViewById(R.id.enableAlarmBtn);
-		
-		if ( mPrefHelper.getAlarmOn() ) {
-			Log.d(TAG, "refreshAlarmUi alarm scheduled");
-			enableBtn.setText(R.string.disable_alarm);
-		} else {
-			Log.d(TAG, "refreshAlarmUi alarm not scheduled");
-			enableBtn.setText(R.string.enable_alarm);
-		}
-		
-		mClock.setAlarmTimeOrNone(mPrefHelper.getAlarmOn() ? mPrefHelper.getAlarmDueIn() : null);
+        mClock.forceRepaint();
 	}
 	
 	@Override
@@ -231,41 +169,10 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 			showAboutDialog();
 			
 			break;
-//		case R.id.grab_screenshot:
-//			Log.d(TAG, "Grabbing screenshot");
-//			
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					mClock.grabScreenshot();
-//				}
-//			}).start();
-//			
-//			
-//			break;
 		}
 		
 		return true;
 	}
-	
-	private void logDeviceInfo () {
-	    Display display = getWindowManager().getDefaultDisplay();
-	    DisplayMetrics outMetrics = new DisplayMetrics ();
-	    display.getMetrics(outMetrics);
-
-	    float density  = getResources().getDisplayMetrics().density;
-	    float dpH = outMetrics.heightPixels / density;
-	    float dpW  = outMetrics.widthPixels / density;
-	    
-	    Log.d(TAG, String.format("DPI: %f, width[dp]: %.1f, height[dp]: %.1f", density, dpW, dpH));
-	}
-
 
 	private void showAboutDialog () {
 		String author = getResources().getString(R.string.author);
@@ -288,12 +195,17 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 		((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 	}
 
-
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long id) {
-		boolean am = (pos == 0);
-		Log.d(TAG, "Setting alarm time of day to "+am);
-		mPrefHelper.setAlarmInTheMorning(am);
+		if ( pos == mTimeOfDay.getSelectedItemPosition() ) return;
+		
+		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+		boolean morning = (pos == 0);
+		if ( (alarm.isMorning() && !morning) || (!alarm.isMorning() && morning) ) {
+			alarm.add(12*TimeUtils.HOUR);
+		}
+		mAlarmMgmt.getSelectedAlarm().add(12*TimeUtils.HOUR);
+		mAlarmMgmt.persist();
 	}
 
 	@Override
@@ -301,19 +213,73 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, Al
 		Log.w(TAG, "nothing selected in time of day spinner");
 	}
 
-	private void setDeveloperMode () {
-		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-		.detectDiskReads()
-		.detectDiskWrites()
-		.detectAll()   // or .detectAll() for all detectable problems
-		.penaltyLog()
-		.build());
-		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-		.detectLeakedSqlLiteObjects()
-		.detectLeakedClosableObjects()
-		.penaltyLog()
-		.penaltyDeath()
-		.build());
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.d(TAG, "onPause()");
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Log.d(TAG, "onStart()");
+		
+		EasyTracker.getInstance().activityStart(this);
 	}
 
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Log.d(TAG, "onStop()");
+		
+		EasyTracker.getInstance().activityStop(this);
+	}
+	
+	private void refreshInterfaceTime () {
+		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+		mTime.setText(TimeUtils.getTimeFormatted(TimeUtils.getTimeFromSecondsFromMidnight(alarm.get())));
+	}
+	
+	private void refreshInterfaceTimeOfDay () {
+		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+		mTimeOfDay.setSelection(alarm.isMorning() ? 0 : 1);
+	}
+	
+	private void refreshInterfaceEnabled () {
+		Button enableBtn = (Button) findViewById(R.id.enableAlarmBtn);
+		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+		
+		if ( alarm.getEnabled() ) {
+			Log.d(TAG, "refreshIntrefaceEnabled(): Alarm enabled");
+			enableBtn.setText(R.string.disable_alarm);
+		} else {
+			Log.d(TAG, "refreshIntrefaceEnabled(): Alarm disabled");
+			enableBtn.setText(R.string.enable_alarm);
+		}
+	}
+
+	@Override
+	public void timeChanged(final AlarmTime alarm, int newSeconds,
+			boolean timeOfDayChanged) {
+		if ( alarm.equals(mAlarmMgmt.getSelectedAlarm()) ) {
+			//Log.d(TAG, "Selected alarm change. Updating time. Time of day changed: "+timeOfDayChanged);
+			
+			refreshInterfaceTime();
+			
+			if ( timeOfDayChanged ) {
+				Log.d(TAG, "Changing time of day spinner");
+				mTimeOfDaySpinnerHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						mTimeOfDay.setSelection(alarm.isMorning() ? 0 : 1, false);		
+					}
+				});
+			}
+		}
+	}
+
+	@Override
+	public void statusChanged(AlarmTime alarm, boolean isEnabled) {
+		refreshInterfaceEnabled();
+	}
 }

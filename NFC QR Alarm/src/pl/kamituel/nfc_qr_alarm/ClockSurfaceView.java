@@ -1,10 +1,8 @@
 package pl.kamituel.nfc_qr_alarm;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,7 +10,6 @@ import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,12 +22,15 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	private final static String TAG = ClockSurfaceView.class.getSimpleName();
 	
 	private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private float mAlarmAngle = 0;
 	
 	private int mCanvasWidth = 0;
 	private int mCanvasHeight = 0;
 	private int x, y, w, h, cx, cy;
 	
+	/**
+	 * Theese are here to avoid instantiating them
+	 * over and over again in onDraw().
+	 */
 	private RectF mOuterCircle = null;
 	private RectF mInnerCircle = null;
 	private RectF mAlarmBullet = null;
@@ -43,21 +43,19 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	private boolean mIsRunning = true;
 	private boolean mRepaint = true;
 	
-	private Calendar mAlarmTime = null;
+	private AlarmDataProvider mAlarmData = null;
 	
-	private boolean mGrabScreenshot = false;
-
 	public ClockSurfaceView(Context context) {
 		super(context);
-		_ClockSurfaceView();
+		_ClockSurfaceView(context);
 	}
 
 	public ClockSurfaceView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		_ClockSurfaceView();
+		_ClockSurfaceView(context);
 	}
 	
-	private void _ClockSurfaceView () {
+	private void _ClockSurfaceView (Context context) {
 		if ( isInEditMode() ) return;
 		
 		//this.setDrawingCacheEnabled(true);
@@ -68,60 +66,36 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		getHolder().addCallback(this);
 		
 		setOnTouchListener(this);
-		
+
 		Log.d(TAG, "ClockSurface created");		
 	}
 	
-	public void setAlarmTimeOrNone (Calendar c) {
-		mAlarmTime = c;
-	}
-
-	public void setAngle (double a) {
-		mAlarmAngle = (float) a;
-		mRepaint = true;
+	private float getAlarmHandAngle () {
+		return TimeUtils.secondsToAngle(mAlarmData.getSelectedAlarm().get());
 	}
 
 	@Override
 	public void onDraw(Canvas c) {
 		super.onDraw(c);
 		
-//		Bitmap screenshot = null;
-//		if ( mGrabScreenshot ) {
-//			screenshot = Bitmap.createBitmap(mCanvasWidth, mCanvasHeight, Bitmap.Config.ARGB_8888);
-//			c = new Canvas(screenshot);
-//		}
+		AlarmTime alarm = mAlarmData.getSelectedAlarm();
 		
 		if ( isInEditMode() ) return;
 		
-		drawClockBase(c);
-		drawAlarm(c);
-		drawClockCurrentTime(c);
+		drawClockBase(c, alarm);
+		
+		if ( !alarm.getEnabled() ) drawAlarm(c);
+		if ( !alarm.getEnabled() ) drawClockCurrentTime(c);
 		
 		drawInnerRing(c);
 		
-		drawAlarmDueIn(c);
-		
-		
-//		if ( mGrabScreenshot ) {
-//			mGrabScreenshot = false;
-//			try {
-//				OutputStream out = new FileOutputStream("/storage/sdcard0/Pictures/Screenshots/canvas.png");
-//				screenshot.compress(CompressFormat.PNG, 100, out);
-//				out.close();
-//				Log.i(TAG, "Screenshot saved");
-//			} catch (Exception e) {
-//				Log.e(TAG, "Screenshot error", e);
-//			}
-//		}
-		
+		if ( alarm.getEnabled() ) drawAlarmDueIn(c, alarm);
 	}
 	
 	private void drawAlarm (Canvas c) {
-		if ( mAlarmTime != null ) return; 
-		
 		c.save();
 		
-		c.rotate(-90+mAlarmAngle, mCanvasWidth/2, mCanvasHeight/2);
+		c.rotate(-90+getAlarmHandAngle(), mCanvasWidth/2, mCanvasHeight/2);
 		
 		mPaint.setColor(Color.parseColor("#ee3333"));
 		mPaint.setStrokeWidth(5);
@@ -137,17 +111,13 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.restore();
 	}
 	
-	private void drawClockBase (Canvas c) {
+	private void drawClockBase (Canvas c, AlarmTime alarm) {
 		int size;
 		
 		mPaint.setStyle(Paint.Style.FILL);
 		
-		//mPaint.setColor(Color.YELLOW);
-		//c.drawRect(0, 0, mCanvasWidth, mCanvasHeight, mPaint);
-		
 		// outer circle
-		if ( mAlarmTime == null ) mPaint.setColor(Color.parseColor("#eeeeee"));
-		else mPaint.setColor(Color.parseColor("#999999"));
+		mPaint.setColor(Color.parseColor(alarm.getEnabled() ? "#999999" : "#EEEEEE"));
 		c.drawOval(mOuterCircle, mPaint);
 		
 		// inner circle
@@ -176,8 +146,6 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 			default: px = -700; py = -700;
 			}
 			
-			
-			
 			int centerX = cx;
 			int centerY = cy;
 			int marginH = size*5;
@@ -187,10 +155,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 			int right = (int)(centerX + px * (w/2-marginH) + size);
 			int bottom = (int)(centerY + py * (h/2-marginH) + size);
 			
-			//Log.d(TAG, String.format("px %f py %f l %d t %d r %d b %d", px, py, left, top, right, bottom));
-			
-			if ( mAlarmTime == null )	mPaint.setColor(Color.parseColor("#ffffff"));
-			else mPaint.setColor(Color.parseColor("#aaaaaa"));
+			mPaint.setColor(Color.parseColor(alarm.getEnabled() ? "#AAAAAA" : "#FFFFFF"));
 			c.drawOval(new RectF(left, top, right, bottom), mPaint);
 		}
 		
@@ -220,11 +185,6 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.rotate(angle, mCanvasWidth/2, mCanvasHeight/2);
 		
 		mPaint.setStyle(Paint.Style.STROKE);
-		
-//		mPaint.setColor(Color.parseColor("#333333"));
-//		mPaint.setStrokeWidth(7);
-//		c.drawLine(cx+w/20, cy, x+w-w*10/100+2, cy, mPaint);
-		
 		mPaint.setColor(Color.parseColor("#ffffff"));
 		mPaint.setStrokeWidth(3);
 		c.drawLine(cx+w/30, cy, x+w-w*10/100, cy, mPaint);
@@ -239,37 +199,14 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.rotate(angle, mCanvasWidth/2, mCanvasHeight/2);
 		
 		mPaint.setStyle(Paint.Style.STROKE);
-		
-//		mPaint.setColor(Color.parseColor("#333333"));
-//		mPaint.setStrokeWidth(9);
-//		c.drawLine(cx+w/20, cy, x+w-w*25/100+2, cy, mPaint);
-		
 		mPaint.setColor(Color.parseColor("#ffffff"));
 		mPaint.setStrokeWidth(5);
 		c.drawLine(cx+w/30, cy, x+w-w*25/100, cy, mPaint);
 		
-//		int thick = 3;
-//		
-//		Path p = new Path();
-//		p.setLastPoint(cx+w*3/100, cy-thick);
-//		p.lineTo(x+w-w*25/100, cy-thick);
-//		p.setLastPoint(x+w-w*25/100, cy-thick);
-//		RectF arc = new RectF(x+w-w*25/100, cy-thick, x+w-w*25/100+thick*2, cy+thick);
-//		p.arcTo(arc, 270, 180);
-//		//p.lineTo(x+w-w*15/100, cy+thick);
-//		p.setLastPoint(x+w-w*25/100, cy+thick);
-//		p.lineTo(cx+w*3/100, cy+thick);
-//		p.setLastPoint(cx+w*3/100, cy+thick);
-//		p.lineTo(cx+w*3/100, cy-thick);
-//		
-//		c.drawPath(p, mPaint);
-		
 		c.restore();
 	}
 	
-	private void drawAlarmDueIn (Canvas c) {
-		if ( mAlarmTime == null ) return;
-		
+	private void drawAlarmDueIn (Canvas c, AlarmTime alarm) {
 		// inner circle
 		mPaint.setColor(Color.parseColor("#003a51"));
 		mPaint.setShader(mAlarmDueInGradient);
@@ -279,13 +216,9 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		int txtLarge = w/10;
 		int txtSmall = w/15;
 		
-		Calendar cnow = Calendar.getInstance();
-		Calendar diff = Calendar.getInstance(TimeZone.getTimeZone("UCT"));
-		diff.setTimeInMillis(mAlarmTime.getTimeInMillis()-cnow.getTimeInMillis());
-		
-		int hours = diff.get(Calendar.HOUR_OF_DAY);
-		int mins = diff.get(Calendar.MINUTE);
-		
+		int hours = alarm.getCountdownHours();
+		int mins = alarm.getCountdownMinutes();
+
 		mPaint.setColor(Color.parseColor("#bbbbbb"));
 		mPaint.setTextSize(txtSmall);
 		String text = getResources().getString(R.string.alarm_due_in);
@@ -382,23 +315,11 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		Log.d(TAG, "onMeasure");
+		//Log.d(TAG, "onMeasure");
 		super.onMeasure(widthMeasureSpec, widthMeasureSpec);
 	}
 	
-
-
-	@Override
-	public boolean onTouch(View arg0, MotionEvent ev) {
-		if ( mAlarmTime != null ) return false;
-		//Log.d(TAG, "action "+ev.getAction());
-		
-		int cx = mCanvasWidth/2;
-		int cy = mCanvasHeight/2;
-		
-		float x = ev.getX();
-		float y = ev.getY();
-
+	private float getAngleFromTouch (int cx, int cy, float x, float y) {
 		double angle = 0;
 		float dx = x - cx;
 		float dy = y - cy;
@@ -416,146 +337,66 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 			angle = 3/2*Math.PI;
 		} else {
 			Log.e(TAG, "Could not compute angle for "+dx+","+dy);
-			return false;
+			return 0;
 		}
-		angle = Math.toDegrees(angle);
-
-		int secondsTillMidnight = TimeUtils.getSecondsFromMidnight(angle);
-		secondsTillMidnight = secondsTillMidnight - (secondsTillMidnight % (5*60));
-		angle = TimeUtils.getAngleFromSecondsFromMidnight(secondsTillMidnight);
-		setAngle(angle);
-		
-		//Date sanitized = TimeUtils.sanitizeDate(TimeUtils.getTimeFromAngle(angle));
-		//setAngle(TimeUtils.getAngleFromTime(sanitized));
-		//if ( mAlarmListener != null ) mAlarmListener.onAlarmChanged(sanitized);
-		if ( mAlarmListener != null ) mAlarmListener.onAlarmChanged(secondsTillMidnight);
-		
-		Integer prevSecondsTillMidnight = (Integer) getTag(R.id.clock_time_on_previous_touch);
-		if ( prevSecondsTillMidnight != null ) {
-			switch ( ev.getAction() ) {
-			case MotionEvent.ACTION_DOWN:
-				Log.d(TAG, "Clock presseed");
-				break;
-			case MotionEvent.ACTION_MOVE:
-				//Log.d(TAG, "prevSec "+prevSecondsTillMidnight+" sec "+secondsTillMidnight);
-				
-				if ( prevSecondsTillMidnight > 11*3600 && secondsTillMidnight < 1*3600 ) {
-					Log.d(TAG, "Change forward "+secondsTillMidnight+" prev="+prevSecondsTillMidnight);
-					if ( mAlarmListener != null ) mAlarmListener.onTimeOfDayChanged();
-				} else if ( prevSecondsTillMidnight < 1*3600 && secondsTillMidnight > 11*3600 ) {
-					Log.d(TAG, "Change backward "+secondsTillMidnight+" prev="+prevSecondsTillMidnight);
-					if ( mAlarmListener != null ) mAlarmListener.onTimeOfDayChanged();
-				}
-				
-				break;
-			}
-		} 
-		
-		if ( ev.getAction() == MotionEvent.ACTION_UP && mAlarmListener != null ) mAlarmListener.commit();
-		
-		setTag(R.id.clock_time_on_previous_touch, secondsTillMidnight);
-		return true;
-	}
-
-	public static interface AlarmListener {
-		public void onAlarmChanged (int seconsTill12);
-		public void onTimeOfDayChanged();
-		public void commit();
+		return (float) Math.toDegrees(angle);
 	}
 	
-	private AlarmListener mAlarmListener = null;
-	public void setAlarmListener (AlarmListener l) {
-		mAlarmListener = l;
-	}
+	@Override
+	public boolean onTouch(View arg0, MotionEvent ev) {
+		AlarmTime alarm = mAlarmData.getSelectedAlarm();
+		if ( alarm.getEnabled() ) return false;
+		
+		int cx = mCanvasWidth/2;
+		int cy = mCanvasHeight/2;
+		float x = ev.getX();
+		float y = ev.getY();
+		float angle = getAngleFromTouch(cx, cy, x, y);
+		
+		int seconds = TimeUtils.angleToSeconds(angle, true);
 
-	public void grabScreenshot () {
-		mGrabScreenshot = true; 
-	}
+		switch ( ev.getAction() ) {
+		case MotionEvent.ACTION_DOWN:
+			Log.d(TAG, "Clock presseed");
+			break;
+		case MotionEvent.ACTION_MOVE:			
+			int H = TimeUtils.HOUR;
+			int prevSeconds = (alarm.get() % TimeUtils.TWELVE_HOUR);
+			boolean crossedTwelveOclock = ((prevSeconds > 11*H && seconds < H) 
+					|| (prevSeconds < H && seconds > 11*H));
+			
+			if ( crossedTwelveOclock) Log.d(TAG, "Twelve o'clock crossed");
+			
+			if ( alarm.get() >= 12*H ) {
+				if ( crossedTwelveOclock ) alarm.set(seconds);
+				else alarm.set(12*H+seconds);
+			} else {
+				if ( crossedTwelveOclock ) alarm.set(12*H+seconds);
+				else alarm.set(seconds);	
+			}
+			
+			//if ( crossedTwelveOclock ) mAlarmData.onTimeOfDayChanged();
+			
+			//if ( crossedTwelveOclock ) Log.d(TAG, "touch seconds "+seconds+", prev "+prevSeconds*1.0/H+", res "+mAlarm.get()*1.0/H);
 
-//	@Override
-//	protected void onAttachedToWindow() {
-//		Log.d(TAG, "onAttachedToWindow");
-//		super.onAttachedToWindow();
-//	}
-//
-//	@Override
-//	protected void onDetachedFromWindow() {
-//		Log.d(TAG, "onDetachedFromWindow");
-//		super.onDetachedFromWindow();
-//	}
-//
-//	@Override
-//	protected void onWindowVisibilityChanged(int visibility) {
-//		Log.d(TAG, "onWindowVisibilityChanged");
-//		super.onWindowVisibilityChanged(visibility);
-//	}
-//
-//	@Override
-//	protected void onAnimationEnd() {
-//		Log.d(TAG, "onAnimationEnd");
-//		super.onAnimationEnd();
-//	}
-//
-//	@Override
-//	protected void onAnimationStart() {
-//		Log.d(TAG, "onAnimationStart");
-//		super.onAnimationStart();
-//	}
-//
-//	@Override
-//	protected void onConfigurationChanged(Configuration newConfig) {
-//		Log.d(TAG, "onConfigurationChanged");
-//		super.onConfigurationChanged(newConfig);
-//	}
-//
-//	@Override
-//	protected int[] onCreateDrawableState(int extraSpace) {
-//		Log.d(TAG, "onCreateDrawableState");
-//		return super.onCreateDrawableState(extraSpace);
-//	}
-//
-//	@Override
-//	protected void onFinishInflate() {
-//		Log.d(TAG, "onFinishInflate");
-//		super.onFinishInflate();
-//	}
-//
-//	@Override
-//	public void onFinishTemporaryDetach() {
-//		Log.d(TAG, "onFinishTemporaryDetach");
-//		super.onFinishTemporaryDetach();
-//	}
-//
-//	@Override
-//	protected void onLayout(boolean changed, int left, int top, int right,
-//			int bottom) {
-//		Log.d(TAG, "onLayout");
-//		super.onLayout(changed, left, top, right, bottom);
-//	}
-//
-//	@Override
-//	protected Parcelable onSaveInstanceState() {
-//		Log.d(TAG, "onSaveInstanceState");
-//		return super.onSaveInstanceState();
-//	}
-//
-//	@Override
-//	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//		Log.d(TAG, "onSizeChanged");
-//		super.onSizeChanged(w, h, oldw, oldh);
-//	}
-//
-//	@Override
-//	public void onStartTemporaryDetach() {
-//		Log.d(TAG, "onStartTemporaryDetach");
-//		super.onStartTemporaryDetach();
-//	}
-//
-//	@Override
-//	protected void onVisibilityChanged(View changedView, int visibility) {
-//		Log.d(TAG, "onVisibilityChanged");
-//		super.onVisibilityChanged(changedView, visibility);
-//	}
-//	
-//	
+			break;
+		}
+
+		mRepaint = true;
+		//mAlarmData.onAlarmChanged(mAlarm.get());
+		
+		if (ev.getAction() == MotionEvent.ACTION_UP ) mAlarmData.commit();
+		
+		//if ( ev.getAction() == MotionEvent.ACTION_UP && mAlarmListener != null ) mAlarmListener.commit();
+
+		return true;
+	}
+	
+	public void setAlarmDataProvider (AlarmDataProvider l) {
+		mAlarmData = l;
+	}
+	
+	public void forceRepaint () {
+		mRepaint = true;
+	}
 }

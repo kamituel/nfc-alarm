@@ -3,22 +3,32 @@ package pl.kamituel.nfc_qr_alarm;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class TimeUtils {
+	@SuppressWarnings("unused")
 	private final static String TAG = TimeUtils.class.getSimpleName();
-	private final static int MINUTE = 60;
-	private final static int HOUR = 60 * MINUTE;
+	public final static int MINUTE = 60;
+	public final static int HOUR = 60 * MINUTE;
+	public final static int TWELVE_HOUR = HOUR * 12;
 	
 	public static String getTimeFormatted (Date d) {
-		return new SimpleDateFormat("h:mm").format(d);
+		return new SimpleDateFormat("h:mm", Locale.getDefault()).format(d);
 	}
 	
-	public static int getSecondsFromMidnight (double angle) {
-		return (int)((angle/360) * (12*HOUR));
+	/**
+	 * Given an angle of the hour clock hand, calculates
+	 * how many seconds has elapsed since midnight.
+	 * @param angle 
+	 * @param am Whether it is morning (true) or evening (false).
+	 * @return
+	 */
+	public static int angleToSeconds (float angle, boolean am) {
+		return (int)(angle/360f*TWELVE_HOUR) + (am ? 0 : TWELVE_HOUR);
 	}
 	
-	public static int getAngleFromSecondsFromMidnight (int secondsTill12) {
-		return (int)(360f * secondsTill12 / (12*HOUR));
+	public static float secondsToAngle (int seconds) {
+		return 360f * (seconds % TWELVE_HOUR) / (float)TWELVE_HOUR; 
 	}
 	
 	public static Date getTimeFromSecondsFromMidnight (int secondsFromMidnight) {		
@@ -38,32 +48,4 @@ public class TimeUtils {
 				+ c.get(Calendar.MINUTE) * MINUTE
 				+ c.get(Calendar.SECOND);
 	}
-	
-	public static String toStr (Date d) {
-		return new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z").format(d);
-	}
-	
-	
-	/*public static double getAngleFromTime (Date d) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(d);
-		
-		return 360 * ((float)c.get(Calendar.HOUR)*60*60+c.get(Calendar.MINUTE)*60)/(12*60*60);
-	}*/
-	
-	/*public static Date sanitizeDate (Date d) {
-	Calendar c = Calendar.getInstance();
-	c.setTime(d);
-	
-	
-	int minute = c.get(Calendar.MINUTE);
-	//if ( minute % 5 <= 2 ) c.set(Calendar.MINUTE, minute - (minute%5));
-	//else c.set(Calendar.MINUTE, (int)Math.floor(minute/5)+5 );
-	c.set(Calendar.MINUTE, minute - (minute%5));
-
-	//Log.d(TAG, "minute before "+minute+" and after "+c.get(Calendar.MINUTE));
-	
-	
-	return c.getTime();
-}*/
 }

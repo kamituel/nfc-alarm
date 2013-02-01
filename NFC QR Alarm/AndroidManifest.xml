@@ -46,6 +46,7 @@
             android:launchMode="singleTask">
         </activity>
         <service android:name=".WakeUpService"></service>
+        <service android:name=".AlarmTrigger"></service>
     </application>
 
 </manifest>
