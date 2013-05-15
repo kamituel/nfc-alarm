@@ -52,6 +52,8 @@ public class AlarmMgmt implements AlarmDataProvider, AlarmTime.Observer, OnShare
 	}
 	
 	public void restore () {
+		mAlarms.clear();
+		
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCtx);
 		String alarmsS = pref.getString(PrefHelper.PREF_ALARMS, null);
 		

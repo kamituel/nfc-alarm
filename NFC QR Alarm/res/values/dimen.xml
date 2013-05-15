@@ -33,13 +33,13 @@
     <dimen name="m_clock_margin_right">0dp</dimen>
     <dimen name="m_clock_margin_top">10dp</dimen>
     <!--      "wake up at TIME in the morning" elements -->
-    <dimen name="m_wake_up_at_text_size">14dp</dimen>
+    <dimen name="m_wake_up_at_text_size">16dp</dimen>
     <dimen name="m_wake_up_time_text_size">22dp</dimen>
     <dimen name="m_wake_up_time_width">70dp</dimen>
     <dimen name="m_wake_up_time_margin_left">5dp</dimen>
     <dimen name="m_wake_up_time_margin_right">5dp</dimen>
     <dimen name="m_wake_up_time_margin_top">0dp</dimen>
-    <dimen name="m_wake_up_in_the_text_size">14dp</dimen>
+    <dimen name="m_wake_up_in_the_text_size">16dp</dimen>
     <dimen name="m_wake_up_in_the_margin_top">0dp</dimen>
     <dimen name="m_wake_up_in_the_margin_bottom">0dp</dimen>
 

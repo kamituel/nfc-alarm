@@ -29,14 +29,11 @@ public class WakeUpService extends Service {
 	public static final int CMD_STOP_ALARM = 2;
 	public static final int CMD_SNOOZE_ALARM = 3;
 	public static final int CMD_UNSNOOZE_ALARM = 4;
-	
-	//private PrefHelper mPrefHelper = null;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
-
 
 	@Override
 	public void onCreate() {
@@ -61,6 +58,12 @@ public class WakeUpService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if ( intent.getExtras() == null ) {
+			Log.e(TAG, "Intent.getExtras() is null?");
+			stopSelf();
+			return Service.START_NOT_STICKY;
+		}
+		
 		int command = intent.getExtras().getInt(COMMAND);
 		Log.d(TAG, "onStartCommand(): Command: "+command);
 
@@ -78,14 +81,6 @@ public class WakeUpService extends Service {
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(i);
 			} else Log.i(TAG, "Not starting service - already running");
-			
-			Log.d(TAG, "Setting alarm disabled");
-
-			AlarmMgmt alarmMgmt = new AlarmMgmt(getApplicationContext());
-			alarmMgmt.restore();
-			alarmMgmt.getSelectedAlarm().setEnabled(false);
-			alarmMgmt.persist();
-			
 			
 			break;
 		case CMD_STOP_ALARM:

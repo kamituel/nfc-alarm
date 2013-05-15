@@ -26,8 +26,7 @@ public class AlarmTriggerTest extends ServiceTestCase<AlarmTrigger> {
 		Calendar ac = Calendar.getInstance(Locale.getDefault());
 		int time = ac.get(Calendar.HOUR_OF_DAY)*TimeUtils.HOUR
 				+ ac.get(Calendar.MINUTE)*TimeUtils.MINUTE
-				+ ac.get(Calendar.SECOND)
-				+ 5;
+				+ ac.get(Calendar.SECOND);
 		am.addAlarm(TestTools.getTime(time, true), false);
 		am.persist();
 		

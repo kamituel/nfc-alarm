@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.kamituel.nfc_qr_alarm"
-    android:versionCode="3"
-    android:versionName="1.0.2"
+    android:versionCode="6"
+    android:versionName="1.0.6"
     android:installLocation="internalOnly">
 
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="17" />
@@ -15,7 +15,7 @@
 
 	<uses-feature android:name="android.hardware.nfc" android:required="true"  />
 
-	<supports-screens android:requiresSmallestWidthDp="480"/>
+	<supports-screens android:requiresSmallestWidthDp="320"/>
 	
     <application android:label="@string/welcome_activity_name"
         android:allowBackup="true"
@@ -37,6 +37,7 @@
             android:label="@string/welcome_activity_name" 
             android:name=".RegisterTagActivity" 
             android:screenOrientation="portrait"
+            android:exported="true"
             android:launchMode="singleTask">
         </activity>
         <activity 

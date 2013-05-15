@@ -10,15 +10,13 @@ import android.view.Display;
 public class Utils {
 	private final static String TAG = Utils.class.getSimpleName();
 	public static boolean RUNS_IN_EMULATOR;
-	public static final boolean TEST_ALARM_TIME = false;
-	public static final boolean DEVELOPER_MODE = false;
+	private static final boolean DEVELOPER_MODE = false;
 	
 	static {
-		Log.d(TAG, "Build.PRODUCT="+Build.PRODUCT);
 		RUNS_IN_EMULATOR = ("google_sdk".equals(Build.PRODUCT) || "sdk_x86".equals(Build.PRODUCT) || "sdk".equals(Build.PRODUCT));
 	}
 	
-	public static void setDeveloperMode () {
+	private static void setDeveloperMode () {
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 		.detectDiskReads()
 		.detectDiskWrites()
@@ -33,7 +31,7 @@ public class Utils {
 		.build());
 	}
 	
-	public static void logDeviceInfo (Activity activity) {
+	private static void logDeviceInfo (Activity activity) {
 	    Display display = activity.getWindowManager().getDefaultDisplay();
 	    DisplayMetrics outMetrics = new DisplayMetrics ();
 	    display.getMetrics(outMetrics);
@@ -43,5 +41,14 @@ public class Utils {
 	    float dpW  = outMetrics.widthPixels / density;
 	    
 	    Log.d(TAG, String.format("DPI: %f, width[dp]: %.1f, height[dp]: %.1f", density, dpW, dpH));
+	    Log.d(TAG, String.format("Build.PRODUCT=%s",Build.PRODUCT));
+	}
+	
+	public static void initDeveloperTools (Activity activity) {
+		logDeviceInfo(activity);
+		if ( DEVELOPER_MODE ) {
+			Log.w(TAG, "Developer mode enabled.");
+			setDeveloperMode();
+		}
 	}
 }

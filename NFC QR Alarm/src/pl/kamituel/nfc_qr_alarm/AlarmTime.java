@@ -38,10 +38,7 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 		
 		Calendar alarm = Calendar.getInstance();
 		if ( nowSecSinceMidnight > get() ) {
-			//Log.d(TAG, "Alarm for tommorow");
 			alarm.add(Calendar.DAY_OF_YEAR, 1);
-		} else {
-			//Log.d(TAG, "Alarm for today");
 		}
 		
 		alarm.set(Calendar.HOUR_OF_DAY, 0);
@@ -106,9 +103,9 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 	private void normalize () {
 		mSeconds = mSeconds % (24*TimeUtils.HOUR);
 		
-		if ( !Utils.RUNS_IN_EMULATOR ) {
+		//if ( !Utils.RUNS_IN_EMULATOR ) {
 			mSeconds = mSeconds - (mSeconds % TIME_RESOLUTION);
-		}
+		//}
 	}
 	
 	public void addObserver (Observer o) {
@@ -160,8 +157,8 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 
 	@Override
 	public String toString() {
-		return String.format(Locale.US, "Alarm: %d (%dH:%dM) %s", 
-				get(), get()/TimeUtils.HOUR, get()%TimeUtils.HOUR, getEnabled() ? "enabled" : "disabled");
+		return String.format(Locale.US, "Alarm: %d (%dH:%dM) %s countdown:%d", 
+				get(), get()/TimeUtils.HOUR, get()%TimeUtils.HOUR, getEnabled() ? "enabled" : "disabled", getCountdown());
 	}
 
 	@Override

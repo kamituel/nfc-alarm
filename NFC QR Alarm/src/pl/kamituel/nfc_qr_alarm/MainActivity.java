@@ -44,8 +44,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate()");
 		
-		if ( Utils.DEVELOPER_MODE ) Utils.setDeveloperMode();
-		Utils.logDeviceInfo(this);
+		Utils.initDeveloperTools(this);
 		
 		mAlarmMgmt = new AlarmMgmt(getApplicationContext());
 		mPrefHelper = new PrefHelper(getApplicationContext());
@@ -94,7 +93,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		Log.d(TAG, "onResume()");
 		
 		if ( WakeUpService.isRunning(getApplicationContext()) ) {
-			Log.d(TAG, "started, but alarm is ringing, so switching to correct view");
+			Log.d(TAG, "onResume(): Started, but alarm is ringing, so switching to correct view");
 			Intent startApp = new Intent(this, WakeUpActivity.class);
 			startApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(startApp);
@@ -197,14 +196,14 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long id) {
-		if ( pos == mTimeOfDay.getSelectedItemPosition() ) return;
+		//if ( pos == mTimeOfDay.getSelectedItemPosition() ) return;
 		
 		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
 		boolean morning = (pos == 0);
 		if ( (alarm.isMorning() && !morning) || (!alarm.isMorning() && morning) ) {
 			alarm.add(12*TimeUtils.HOUR);
 		}
-		mAlarmMgmt.getSelectedAlarm().add(12*TimeUtils.HOUR);
+		//mAlarmMgmt.getSelectedAlarm().add(12*TimeUtils.HOUR);
 		mAlarmMgmt.persist();
 	}
 

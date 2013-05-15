@@ -23,7 +23,7 @@ public class AlarmTrigger extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand(): Looking for alarm which is scheduled to ring next.");
 		
-		AlarmMgmt alarmMgmt = new AlarmMgmt(getApplicationContext());
+		AlarmMgmt alarmMgmt = new AlarmMgmt(this);
 		alarmMgmt.restore();
 		List<AlarmTime> alarms = alarmMgmt.getAlarms();
 		
@@ -36,6 +36,10 @@ public class AlarmTrigger extends Service {
 			
 			if ( nextCountdown < TimeUtils.MINUTE ) {
 				Log.d(TAG, "onStartCommand(): Found alarm which should ring in "+nextCountdown+" seconds.");
+				
+				nextAlarm.setEnabled(false);
+				alarmMgmt.persist();
+				
 				startAlarmService();
 				
 				if ( alarms.size() > 1 && alarms.get(1).getEnabled() ) {
