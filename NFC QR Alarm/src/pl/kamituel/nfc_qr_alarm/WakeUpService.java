@@ -24,7 +24,6 @@ public class WakeUpService extends Service {
 	private boolean mRunning = false;
 
 	public static final String COMMAND = "cmd";
-	public static final int CMD_EMPTY = 0;
 	public static final int CMD_START_ALARM = 1;
 	public static final int CMD_STOP_ALARM = 2;
 	public static final int CMD_SNOOZE_ALARM = 3;
@@ -59,7 +58,7 @@ public class WakeUpService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if ( intent.getExtras() == null ) {
-			Log.e(TAG, "Intent.getExtras() is null?");
+			Log.w(TAG, "Intent.getExtras() is null?");
 			stopSelf();
 			return Service.START_NOT_STICKY;
 		}
@@ -69,44 +68,53 @@ public class WakeUpService extends Service {
 
 		switch ( command ) {
 		case CMD_START_ALARM:
-			if ( !mRunning ) {		
-				mRunning = true;
-				
-				goIntoForeground();
-				
-				ensureVolumeUp();
-				startPlayback();
-				
-				Intent i = new Intent(this, WakeUpActivity.class);
-				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(i);
-			} else Log.i(TAG, "Not starting service - already running");
+			if (mRunning) {
+				Log.w(TAG, "WakeUpService started when one instance is already running.");
+				return Service.START_STICKY;
+			}
 			
+			mRunning = true;
+			goIntoForeground();
+			
+			ensureVolumeUp();
+			startPlayback();
+			
+			AlarmMgmt alarmMgmt = new AlarmMgmt(this);
+			alarmMgmt.restore();
+			alarmMgmt.getSelectedAlarm().setEnabled(false);			
+			alarmMgmt.persist();
+			
+			Intent i = new Intent(this, WakeUpActivity.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
+		
 			break;
 		case CMD_STOP_ALARM:
-			if ( mRunning) stopPlayback();
-			mRunning = false;
-			stopSelf();
+			if (mRunning) {
+				stopPlayback();
+				mRunning = false;
+			}
 			break;
 		case CMD_SNOOZE_ALARM:
-			if ( mRunning ) mPlayer.pause();
-			else stopSelf();
+			if (mRunning) {
+				mPlayer.pause();
+			}
 			break;
 		case CMD_UNSNOOZE_ALARM:
-			if ( mRunning ) mPlayer.start();
-			else stopSelf();
-			break;
-		case CMD_EMPTY:
-			Log.d(TAG, "Canceled alarm");
-			stopSelf();
+			if (mRunning) {
+				mPlayer.start();
+			}
 			break;
 		default:
 			Log.w(TAG, "Unrecognized command "+command);
 		}
+		
+		if (!mRunning) {
+			stopSelf();
+		}
 
 		return Service.START_NOT_STICKY;
 	}
-
 
 	private void startPlayback () {
 		Log.d(TAG, "startPlayback()");
@@ -116,9 +124,12 @@ public class WakeUpService extends Service {
 			mPlayer.setLooping(true);
 			mPlayer.setDataSource(fd.getFileDescriptor());
 			mPlayer.prepare();
-			mPlayer.start();
+			
+			if (!NfcAlarmApp.hasFlag(R.bool.debug_alarm_muted)) {
+				mPlayer.start();
+			}
 		} catch (IllegalArgumentException e) {
-			Log.e(TAG, "", e);
+			Log.e(TAG, "", e); 
 		} catch (IllegalStateException e) {
 			Log.e(TAG, "", e);
 		} catch (IOException e) {

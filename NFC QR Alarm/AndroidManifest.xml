@@ -26,7 +26,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/welcome_activity_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".NfcAlarmApp">
         <activity
             android:name="pl.kamituel.nfc_qr_alarm.MainActivity"
             android:exported="true"
@@ -55,8 +56,6 @@
         </activity>
 
         <service android:name="pl.kamituel.nfc_qr_alarm.WakeUpService" >
-        </service>
-        <service android:name="pl.kamituel.nfc_qr_alarm.AlarmTrigger" >
         </service>
 
         <activity

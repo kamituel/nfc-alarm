@@ -60,4 +60,6 @@
     <string name="title_activity_tag_manage">NFC Tags</string>
     <string name="remove_tag">Delete</string>
     <string name="cant_remove_last_tag">I cowarldy refuse to remove last tag - you couldn\'t disable alarm tomorow!</string>
+    
+    <string name="tag_manage_description">You can add multiple tags. Later, any of those can be used to disable an alaram.\n\nAdd new tag by pressing it against back of your device.</string>
 </resources>

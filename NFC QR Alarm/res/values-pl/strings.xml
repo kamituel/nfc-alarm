@@ -70,4 +70,7 @@
     <string name="remove_tag">Usuń</string>
     <string name="cant_remove_last_tag">Tchórzliwie odmawiam usunięcia ostatniego taga. Jak wyłączyłbyś jutro budzik?</string>
     
+        <string name="tag_manage_description">Możesz dodać wiele tagów. Każdy z nich będzie w stanie wyłączyć budzik.\n\nAby dodać nowy tag, dotknij nim tyłu tego telefonu.</string>
+    
+    
 </resources>

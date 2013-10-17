@@ -1,12 +1,12 @@
 package pl.kamituel.nfc_qr_alarm;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
@@ -39,6 +39,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	private Spinner mTimeOfDay = null;
 	
 	private AlarmMgmt mAlarmMgmt = null;
+	private AlarmTrigger mAlarmTrigger = null;
 	
 	private Handler mTimeOfDaySpinnerHandler = new Handler();
 	
@@ -49,8 +50,9 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		
 		Utils.initDeveloperTools(this);
 		
-		mAlarmMgmt = new AlarmMgmt(getApplicationContext());
-		mPrefHelper = new PrefHelper(getApplicationContext());
+		mAlarmMgmt = new AlarmMgmt(this);
+		mPrefHelper = new PrefHelper(this);
+		mAlarmTrigger = new AlarmTrigger(this);
 	
 		setContentView(R.layout.main_layout);
 		buildActivityUi();
@@ -87,6 +89,11 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
         timeOfDayData.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeOfDay.setAdapter(timeOfDayData);
         mTimeOfDay.setOnItemSelectedListener(this);
+        
+        if (NfcAlarmApp.hasFlag(R.bool.debug)) {
+        	View top = getWindow().getDecorView().findViewById(android.R.id.content);
+        	top.setBackgroundColor(Color.RED);
+        }
 	}
 	
 	@Override
@@ -141,22 +148,8 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		mAlarmMgmt.commit();
 		mAlarmMgmt.persist();
 		
-		Intent triggerAlarmService = new Intent(getApplicationContext(), AlarmTrigger.class);
-		startService(triggerAlarmService);	
-		
-		/*int command = alarmOn ? WakeUpService.CMD_START_ALARM : WakeUpService.CMD_EMPTY;
-		
-		Intent intent = new Intent(this, WakeUpService.class);
-		intent.putExtra(WakeUpService.COMMAND, command);
-		PendingIntent pendingIntent = PendingIntent.getService(
-				this, 12345, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-		
-		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
-		int countdown = alarm.getCountdown();
-		Log.d(TAG, "Alarm rings in "+TimeUtils.formatSeconds(countdown));
-		
-		AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, alarm.getAbsolute()*1000, pendingIntent);*/
+		mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
+		//mAlarmTrigger.schedule(5 * 1000);
 	}
 
 	@Override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="debug" type="bool">false</item>
+    <item name="debug_alarm_muted" type="bool">false</item>
+    <item name="debug_alarm_time_every_minute" type="bool">true</item>
+</resources>

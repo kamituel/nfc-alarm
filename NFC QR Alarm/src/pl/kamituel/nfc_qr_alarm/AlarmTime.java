@@ -23,7 +23,7 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 	private final static Pattern JSON_SECONDS_PATTERN = Pattern.compile(".*seconds\":\\s*(\\d+).*");
 	private final static Pattern JSON_ENABLED_PATTERN = Pattern.compile(".*enabled\":\\s*(true|false).*");
 	
-	private final static int TIME_RESOLUTION = 5*TimeUtils.MINUTE;
+	private final static int TIME_RESOLUTION = 5 * TimeUtils.MINUTE;
 	
 	public AlarmTime () {
 
@@ -103,9 +103,9 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 	private void normalize () {
 		mSeconds = mSeconds % (24*TimeUtils.HOUR);
 		
-		//if ( !Utils.RUNS_IN_EMULATOR ) {
-		//	mSeconds = mSeconds - (mSeconds % TIME_RESOLUTION);
-		//}
+		if (!NfcAlarmApp.hasFlag(R.bool.debug_alarm_time_every_minute)) {
+			mSeconds = mSeconds - (mSeconds % TIME_RESOLUTION);
+		}
 	}
 	
 	public void addObserver (Observer o) {
