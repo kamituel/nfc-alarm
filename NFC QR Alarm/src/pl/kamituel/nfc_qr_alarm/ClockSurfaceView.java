@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
@@ -34,7 +35,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	private RectF mOuterCircle = null;
 	private RectF mInnerCircle = null;
 	private RectF mPmIndicator360 = null;
-	private RectF mPmIndicator720 = null;
+	//private RectF mPmIndicator720 = null;
 	private RectF mAlarmBullet = null;
 	private RectF mCenterPoint = null;
 	private RadialGradient mAlarmGradient = null;
@@ -47,7 +48,52 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	
 	private AlarmDataProvider mAlarmData = null;
 	private boolean mTouchDown = false;
+
+	/**** PRECACHED COLORS ****/
+	// Inner circle gradient
+	private int cInnerCircleLight = Color.parseColor("#104a6a");
+	private int cInnerCircleDark = Color.parseColor("#001a31");
 	
+	// Inner circle gradient when showing "alarm due in" message
+	private int cAlarmDueInLight = Color.parseColor("#ee000000");
+	private int cAlarmDueInDark = Color.parseColor("#aa000000");
+	
+	// Outer circle
+	private int cOuterCircleWhenEnabled = Color.parseColor("#999999");
+	private int cOuterCircleWhenDisabled = Color.parseColor("#EEEEEE");
+	
+	// Alarm arrow gradient
+	private int cAlarmLight = Color.parseColor("#ee3333");
+	private int cAlarmDark = Color.parseColor("#bb0000");
+	
+	// "Due in" rings color
+	private int cDueIn360 = Color.parseColor("#104a6a");
+	private int cDueIn720 = Color.parseColor("#508aaa");
+	
+	/**** PRECACHED PAINTS ****/
+	// Outer circle
+	private Paint pOuterCircleWhenEnabled = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Paint pOuterCircleWhenDisabled = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
+	// Inner circle
+	private Paint pInnerCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
+	// Inner ring
+	private Paint pInnerRing = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Paint pCenterPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
+	// "Due in" rings
+	private Paint pDueIn360 = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Paint pDueIn720 = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
+	// Alarm arrow
+	private Paint pAlarmLine = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Paint pAlarmBullet = new Paint(Paint.ANTI_ALIAS_FLAG);
+	
+	// Clock arrows
+	private Paint pClockHour = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Paint pClockMinute = new Paint(Paint.ANTI_ALIAS_FLAG);
+
 	public ClockSurfaceView(Context context) {
 		super(context);
 		_ClockSurfaceView(context);
@@ -66,8 +112,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		this.getHolder().setFormat(PixelFormat.TRANSPARENT);
 		setWillNotDraw(false);
 		
-		getHolder().addCallback(this);
-		
+		getHolder().addCallback(this);		
 		setOnTouchListener(this);
 
 		Log.d(TAG, "ClockSurface created");		
@@ -80,56 +125,37 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	@Override
 	public void onDraw(Canvas c) {
 		super.onDraw(c);
+		if ( isInEditMode() ) return;
 		
 		AlarmTime alarm = mAlarmData.getSelectedAlarm();
 		Calendar calendar = Calendar.getInstance();
 		
-		if ( isInEditMode() ) return;
-		
+		if ( !alarm.getEnabled() && mTouchDown ) drawPmIndicator(c, calendar); 
+
 		drawClockBase(c, alarm);
 		
 		if ( !alarm.getEnabled() ) drawAlarm(c);
-		if ( !alarm.getEnabled() ) drawClockCurrentTime(c, calendar);
-		if ( !alarm.getEnabled() && mTouchDown ) drawPmIndicator(c, calendar); 
-		
+		if ( !alarm.getEnabled() ) drawClockCurrentTime(c, calendar);		
 		drawInnerRing(c);
 		
 		if ( alarm.getEnabled() ) drawAlarmDueIn(c, alarm);
 	}
 	
 	private void drawAlarm (Canvas c) {
-		c.save();
-		
+		c.save();		
 		c.rotate(-90+getAlarmHandAngle(), mCanvasWidth/2, mCanvasHeight/2);
 		
-		mPaint.setColor(Color.parseColor("#ee3333"));
-		mPaint.setStrokeWidth(5);
-		mPaint.setStyle(Paint.Style.STROKE);
-		
-		c.drawLine(cx+w/30, cy, x+w+w*5/100, cy, mPaint);
-		
-		mPaint.setStyle(Paint.Style.FILL);
-		mPaint.setShader(mAlarmGradient);
-		c.drawOval(mAlarmBullet, mPaint);
-		mPaint.setShader(null);
-		
+		c.drawLine(cx+w/30, cy, x+w+w*5/100, cy, pAlarmLine);
+		c.drawOval(mAlarmBullet, pAlarmBullet);
+
 		c.restore();
 	}
 	
 	private void drawClockBase (Canvas c, AlarmTime alarm) {
 		int size;
 		
-		mPaint.setStyle(Paint.Style.FILL);
-		
-		// outer circle
-		mPaint.setColor(Color.parseColor(alarm.getEnabled() ? "#999999" : "#EEEEEE"));
-		c.drawOval(mOuterCircle, mPaint);
-		
-		// inner circle
-		mPaint.setColor(Color.parseColor("#003a51"));
-		mPaint.setShader(mInnerCircleGradient);
-		c.drawOval(mInnerCircle, mPaint);
-		mPaint.setShader(null);
+		c.drawOval(mOuterCircle, alarm.getEnabled() ? pOuterCircleWhenEnabled : pOuterCircleWhenDisabled);
+		c.drawOval(mInnerCircle, pInnerCircle);
 		
 		size = (int)(0.012 * w);
 		for ( int hour = 0; hour < 12; hour++ ) {
@@ -167,15 +193,8 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	}
 	
 	private void drawInnerRing (Canvas c) {
-		mPaint.setStyle(Paint.Style.STROKE);
-		mPaint.setColor(Color.WHITE);
-		mPaint.setStrokeWidth((int)(0.01*w));
-		c.drawOval(mInnerRing, mPaint);
-		
-		// center point
-		mPaint.setStyle(Paint.Style.FILL);
-		mPaint.setColor(Color.WHITE);
-		c.drawOval(mCenterPoint, mPaint);
+		c.drawOval(mInnerRing, pInnerRing);
+		c.drawOval(mCenterPoint, pCenterPoint);
 	}
 	
 	private void drawClockCurrentTime (Canvas c, Calendar calendar) {
@@ -184,30 +203,20 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	}
 	
 	private void drawClockMinute (Canvas c, Calendar time) {
+		float angle = -90 + 360 * ((float) time.get(Calendar.MINUTE) * 60 + time.get(Calendar.SECOND))/(3600f);
+
 		c.save();
-		
-		float angle = -90+360*((float)time.get(Calendar.MINUTE)*60+time.get(Calendar.SECOND))/(3600f);
-		//Log.d(TAG, "minute rotate "+angle);
 		c.rotate(angle, mCanvasWidth/2, mCanvasHeight/2);
-		
-		mPaint.setStyle(Paint.Style.STROKE);
-		mPaint.setColor(Color.parseColor("#ffffff"));
-		mPaint.setStrokeWidth(3);
-		c.drawLine(cx+w/30, cy, x+w-w*10/100, cy, mPaint);
-		
+		c.drawLine(cx+w/30, cy, x+w-w*10/100, cy, pClockMinute);	
 		c.restore();
 	}
 	
 	private void drawClockHour (Canvas c, Calendar time) {
-		c.save();
 		float angle = timeAngle(time);
+		
+		c.save();
 		c.rotate(angle, mCanvasWidth/2, mCanvasHeight/2);
-		
-		mPaint.setStyle(Paint.Style.STROKE);
-		mPaint.setColor(Color.parseColor("#ffffff"));
-		mPaint.setStrokeWidth(5);
-		c.drawLine(cx+w/30, cy, x+w-w*25/100, cy, mPaint);
-		
+		c.drawLine(cx+w/30, cy, x+w-w*25/100, cy, pClockHour);
 		c.restore();
 	}
 	
@@ -221,6 +230,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	
 	private void drawAlarmDueIn (Canvas c, AlarmTime alarm) {
 		// inner circle
+		mPaint.setStyle(Paint.Style.FILL);
 		mPaint.setColor(Color.parseColor("#003a51"));
 		mPaint.setShader(mAlarmDueInGradient);
 		c.drawOval(mInnerCircle, mPaint);
@@ -276,18 +286,13 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.translate(cx, cx);
 		c.rotate(angle, 0, 0);
 
-		mPaint.setStyle(Paint.Style.FILL);
-		
-		mPaint.setColor(Color.GREEN);
-		c.drawArc(mPmIndicator360, 0, countdownAngle, true, mPaint);
-	
+		c.drawArc(mPmIndicator360, 0, countdownAngle, true, pDueIn360);
+
 		if (countdownAngle > 360) {
-			mPaint.setColor(Color.YELLOW);
-			c.drawArc(mPmIndicator360, 0, countdownAngle % 360, true, mPaint);
+			c.drawArc(mPmIndicator360, 0, countdownAngle % 360, true, pDueIn720);
 		}
 		
 		c.restore();
-		Log.d(TAG, "countdown " + seconds + " countdownangle " + countdownAngle + " angle " + angle);
 	}
 	
 	private class AnimateThread extends Thread {
@@ -331,18 +336,63 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		size = (int)(0.007 * w);
 		mInnerCircle = new RectF(x+size, y+size, w+x-size, h+y-size);
 		
-		size = (int)(0.08 * w);
-		mPmIndicator360 = new RectF(-size, -size, size, size);
-		size = (int)(0.09 * w);
-		mPmIndicator720 = new RectF(-size, -size, size, size);
+		size = (int)(0.01 * w);
+		mPmIndicator360 = new RectF(-w/2-size, -h/2-size, w/2+size, h/2+size);
+		//size = (int)(0.06 * w);
+		//mPmIndicator720 = new RectF(-w/2-size, -h/2-size, w/2+size, h/2+size);
 		
 		size = (int)(0.008 * w);
 		mCenterPoint = new RectF(cx-size, cy-size, cx+size, cy+size);
 		mInnerRing = new RectF(cx-w/30, cy-h/30, cx+w/30, cy+h/30);
 		
-		mAlarmGradient = new RadialGradient(mAlarmBullet.centerX(), mAlarmBullet.centerY(), mAlarmBullet.width()/2, Color.parseColor("#ee3333"), Color.parseColor("#bb0000"), Shader.TileMode.CLAMP);
-		mInnerCircleGradient = new RadialGradient(cx, cy, w/2, Color.parseColor("#104a6a"), Color.parseColor("#001a31"), Shader.TileMode.CLAMP);
-		mAlarmDueInGradient = new RadialGradient(cx, cy, w/2, Color.parseColor("#ee000000"), Color.parseColor("#aa000000"), Shader.TileMode.CLAMP);
+		mAlarmGradient = new RadialGradient(mAlarmBullet.centerX(), mAlarmBullet.centerY(), mAlarmBullet.width()/2, cAlarmLight, cAlarmDark, Shader.TileMode.CLAMP);
+		mInnerCircleGradient = new RadialGradient(cx, cy, w/2, cInnerCircleLight, cInnerCircleDark, Shader.TileMode.CLAMP);
+		mAlarmDueInGradient = new RadialGradient(cx, cy, w/2, cAlarmDueInLight, cAlarmDueInDark, Shader.TileMode.CLAMP);
+		
+		precomputePaints();
+	}
+	
+	private void precomputePaints () {
+		pDueIn360.setStyle(Paint.Style.STROKE);
+		pDueIn360.setStrokeWidth((int)(0.04 * w));
+		pDueIn360.setColor(cDueIn360);
+		
+		pDueIn720.setStyle(Paint.Style.STROKE);
+		pDueIn720.setStrokeWidth((int)(0.04 * w));
+		pDueIn720.setColor(cDueIn720);
+		pDueIn720.setPathEffect(new DashPathEffect(new float[] {5, 25}, 0));
+		
+		pAlarmLine.setColor(Color.parseColor("#ee3333"));
+		pAlarmLine.setStrokeWidth(5);
+		pAlarmLine.setStyle(Paint.Style.STROKE);
+
+		pAlarmBullet.setStyle(Paint.Style.FILL);
+		pAlarmBullet.setShader(mAlarmGradient);
+		
+		pOuterCircleWhenEnabled.setStyle(Paint.Style.STROKE);
+		pOuterCircleWhenEnabled.setColor(cOuterCircleWhenEnabled);
+		
+		pOuterCircleWhenDisabled.setStyle(Paint.Style.STROKE);
+		pOuterCircleWhenDisabled.setColor(cOuterCircleWhenDisabled);
+		
+		pInnerCircle.setStyle(Paint.Style.FILL);
+		pInnerCircle.setColor(Color.parseColor("#003a51"));
+		pInnerCircle.setShader(mInnerCircleGradient);
+		
+		pInnerRing.setStyle(Paint.Style.STROKE);
+		pInnerRing.setColor(Color.WHITE);
+		pInnerRing.setStrokeWidth((int)(0.01*w));
+		
+		pCenterPoint.setStyle(Paint.Style.FILL);
+		pCenterPoint.setColor(Color.WHITE);
+		
+		pClockMinute.setStyle(Paint.Style.STROKE);
+		pClockMinute.setColor(Color.parseColor("#ffffff"));
+		pClockMinute.setStrokeWidth(3);
+		
+		pClockHour.setStyle(Paint.Style.STROKE);
+		pClockHour.setColor(Color.parseColor("#ffffff"));
+		pClockHour.setStrokeWidth(5);
 	}
 
 	@Override
