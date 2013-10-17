@@ -33,6 +33,8 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	 */
 	private RectF mOuterCircle = null;
 	private RectF mInnerCircle = null;
+	private RectF mPmIndicator360 = null;
+	private RectF mPmIndicator720 = null;
 	private RectF mAlarmBullet = null;
 	private RectF mCenterPoint = null;
 	private RadialGradient mAlarmGradient = null;
@@ -44,6 +46,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	private boolean mRepaint = true;
 	
 	private AlarmDataProvider mAlarmData = null;
+	private boolean mTouchDown = false;
 	
 	public ClockSurfaceView(Context context) {
 		super(context);
@@ -79,13 +82,15 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		super.onDraw(c);
 		
 		AlarmTime alarm = mAlarmData.getSelectedAlarm();
+		Calendar calendar = Calendar.getInstance();
 		
 		if ( isInEditMode() ) return;
 		
 		drawClockBase(c, alarm);
 		
 		if ( !alarm.getEnabled() ) drawAlarm(c);
-		if ( !alarm.getEnabled() ) drawClockCurrentTime(c);
+		if ( !alarm.getEnabled() ) drawClockCurrentTime(c, calendar);
+		if ( !alarm.getEnabled() && mTouchDown ) drawPmIndicator(c, calendar); 
 		
 		drawInnerRing(c);
 		
@@ -163,6 +168,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	
 	private void drawInnerRing (Canvas c) {
 		mPaint.setStyle(Paint.Style.STROKE);
+		mPaint.setColor(Color.WHITE);
 		mPaint.setStrokeWidth((int)(0.01*w));
 		c.drawOval(mInnerRing, mPaint);
 		
@@ -172,9 +178,9 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.drawOval(mCenterPoint, mPaint);
 	}
 	
-	private void drawClockCurrentTime (Canvas c) {
-		drawClockHour(c, Calendar.getInstance());
-		drawClockMinute(c, Calendar.getInstance());
+	private void drawClockCurrentTime (Canvas c, Calendar calendar) {
+		drawClockHour(c, calendar);
+		drawClockMinute(c, calendar);
 	}
 	
 	private void drawClockMinute (Canvas c, Calendar time) {
@@ -194,8 +200,7 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	
 	private void drawClockHour (Canvas c, Calendar time) {
 		c.save();
-		float angle = -90+360*((float)time.get(Calendar.HOUR_OF_DAY)*60*60+time.get(Calendar.MINUTE)*60+time.get(Calendar.SECOND))/(3600f*12);
-		//Log.d(TAG, "hour rotate "+angle);
+		float angle = timeAngle(time);
 		c.rotate(angle, mCanvasWidth/2, mCanvasHeight/2);
 		
 		mPaint.setStyle(Paint.Style.STROKE);
@@ -204,6 +209,14 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.drawLine(cx+w/30, cy, x+w-w*25/100, cy, mPaint);
 		
 		c.restore();
+	}
+	
+	private float timeAngle (Calendar time) {
+		return -90 + 360 * (
+				(float)time.get(Calendar.HOUR_OF_DAY) * 60 * 60
+				+ time.get(Calendar.MINUTE) * 60
+				+ time.get(Calendar.SECOND)
+				) / (3600f * 12);
 	}
 	
 	private void drawAlarmDueIn (Canvas c, AlarmTime alarm) {
@@ -250,6 +263,33 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		c.drawText(mLabel, cx-totalW/2+hTextW+hLabelW+mTextW, cy+txtLarge/2, mPaint);
 	}
 
+	private void drawPmIndicator (Canvas c, Calendar calendar) {
+		AlarmTime alarm = mAlarmData.getSelectedAlarm();
+		int seconds = alarm.getCountdown();
+		
+		float countdownAngle = (seconds > TimeUtils.TWELVE_HOUR ? 360 : 0) 
+				+ TimeUtils.secondsToAngle(seconds);
+		
+		float angle = timeAngle(calendar);
+		
+		c.save();
+		c.translate(cx, cx);
+		c.rotate(angle, 0, 0);
+
+		mPaint.setStyle(Paint.Style.FILL);
+		
+		mPaint.setColor(Color.GREEN);
+		c.drawArc(mPmIndicator360, 0, countdownAngle, true, mPaint);
+	
+		if (countdownAngle > 360) {
+			mPaint.setColor(Color.YELLOW);
+			c.drawArc(mPmIndicator360, 0, countdownAngle % 360, true, mPaint);
+		}
+		
+		c.restore();
+		Log.d(TAG, "countdown " + seconds + " countdownangle " + countdownAngle + " angle " + angle);
+	}
+	
 	private class AnimateThread extends Thread {
 		public void run () {
 			int i = 0;
@@ -268,8 +308,6 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		}
 
 	}
-
-
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int cw, int ch) {
@@ -292,6 +330,11 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		
 		size = (int)(0.007 * w);
 		mInnerCircle = new RectF(x+size, y+size, w+x-size, h+y-size);
+		
+		size = (int)(0.08 * w);
+		mPmIndicator360 = new RectF(-size, -size, size, size);
+		size = (int)(0.09 * w);
+		mPmIndicator720 = new RectF(-size, -size, size, size);
 		
 		size = (int)(0.008 * w);
 		mCenterPoint = new RectF(cx-size, cy-size, cx+size, cy+size);
@@ -358,6 +401,10 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		switch ( ev.getAction() ) {
 		case MotionEvent.ACTION_DOWN:
 			Log.d(TAG, "Clock presseed");
+			mTouchDown = true;
+			break;
+		case MotionEvent.ACTION_UP:
+			mTouchDown = false;
 			break;
 		case MotionEvent.ACTION_MOVE:			
 			int H = TimeUtils.HOUR;

@@ -12,12 +12,12 @@ import android.util.Log;
 
 public class AlarmTrigger extends Service {
 	private final static String TAG = AlarmTrigger.class.getSimpleName();
-
+	private final static int REQUEST_CODE = 12345;
+	
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
-	
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -28,14 +28,15 @@ public class AlarmTrigger extends Service {
 		List<AlarmTime> alarms = alarmMgmt.getAlarms();
 		
 		if ( alarms.size() == 0 || alarms.get(0).getEnabled() == false ) {
-			Log.d(TAG, "onStartCommand(): No alarm found to ring next. Clear any future WakeUpService calls.");
+			Log.d(TAG, "onStartCommand(): No alarm found to ring next. " +
+					"Clear any future WakeUpService calls.");
 			ensureWakeUpServiceNotCalled();
 		} else {
 			AlarmTime nextAlarm = alarms.get(0);
 			int nextCountdown = nextAlarm.getCountdown();
 			
 			if ( nextCountdown < TimeUtils.MINUTE ) {
-				Log.d(TAG, "onStartCommand(): Found alarm which should ring in "+nextCountdown+" seconds.");
+				Log.d(TAG, "onStartCommand(): Found alarm which should ring in " + nextCountdown + " seconds.");
 				
 				nextAlarm.setEnabled(false);
 				alarmMgmt.persist();
@@ -69,28 +70,37 @@ public class AlarmTrigger extends Service {
 		startService(intent);
 	}
 	
+	/*
+	 * Schedules AlarmTrigger to wake up in time for the given AlarmTime
+	 * (it will run 15 seconds before the given time).
+	 */
 	private void setSelf (AlarmTime alarm) {
 		Log.d(TAG, "setSelf(): Schedule myself to run in "+alarm.getCountdown()+" seconds");
 		
 		Intent intent = new Intent(this, AlarmTrigger.class);
 		PendingIntent pi = PendingIntent.getService(
 				getApplicationContext(), 
-				12346, 
+				REQUEST_CODE, 
 				intent, 
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);
-		am.set(AlarmManager.RTC_WAKEUP, alarm.getAbsolute()*1000, pi);
+		am.set(AlarmManager.RTC_WAKEUP, (alarm.getAbsolute() - 15) * 1000, pi);
 	}
 	
+	/*
+	 * Ensures WakeUpService will not ring unnecessarily. It is done by calling
+	 * AlarmManager.set() with the same intent (Intent.filterEquals()),
+	 * but with CMD_EMPTY.
+	 */
 	private void ensureWakeUpServiceNotCalled () {
+		Log.d(TAG, "ensureWakeUpServiceNotCalled(): Cancel it now.");
+
 		Intent intent = new Intent(this, WakeUpService.class);
 		intent.putExtra(WakeUpService.COMMAND, WakeUpService.CMD_EMPTY);
 		PendingIntent pendingIntent = PendingIntent.getService(
-				this, 12345, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-		
-		Log.d(TAG, "ensureWakeUpServiceNotCalled(): Cancel it now.");
-		
+				this, REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				
 		AlarmManager am = (AlarmManager) getSystemService(Activity.ALARM_SERVICE);
 		am.set(AlarmManager.RTC_WAKEUP, -1, pendingIntent);		
 	}

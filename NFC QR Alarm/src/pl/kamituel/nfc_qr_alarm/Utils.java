@@ -20,7 +20,7 @@ public class Utils {
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 		.detectDiskReads()
 		.detectDiskWrites()
-		.detectAll()   // or .detectAll() for all detectable problems
+		.detectAll()
 		.penaltyLog()
 		.build());
 		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()

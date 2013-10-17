@@ -86,15 +86,19 @@ public class WakeUpService extends Service {
 		case CMD_STOP_ALARM:
 			if ( mRunning) stopPlayback();
 			mRunning = false;
+			stopSelf();
 			break;
 		case CMD_SNOOZE_ALARM:
 			if ( mRunning ) mPlayer.pause();
+			else stopSelf();
 			break;
 		case CMD_UNSNOOZE_ALARM:
 			if ( mRunning ) mPlayer.start();
+			else stopSelf();
 			break;
 		case CMD_EMPTY:
 			Log.d(TAG, "Canceled alarm");
+			stopSelf();
 			break;
 		default:
 			Log.w(TAG, "Unrecognized command "+command);

@@ -1,5 +1,8 @@
 package pl.kamituel.nfc_qr_alarm;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -48,21 +51,20 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		
 		mAlarmMgmt = new AlarmMgmt(getApplicationContext());
 		mPrefHelper = new PrefHelper(getApplicationContext());
-		
-		/**
-		 * If there is no NFC tag (ex. first launch), 
-		 * open RegisterTagActivity and finish.
-		 */
-		if ( mPrefHelper.getTag() == null ) {
-			Intent i = new Intent(getApplicationContext(), RegisterTagActivity.class);
-			startActivity(i);
-			finish();
-			return;
-		}
-		
+	
 		setContentView(R.layout.main_layout);
-
 		buildActivityUi();
+	}
+	
+	private void registerFirstTag () {
+		Intent i = new Intent(getApplicationContext(), RegisterTagActivity.class);
+		startActivity(i);
+		finish();
+	}
+	
+	private void manageTags () {
+		Intent i = new Intent(getApplicationContext(), TagManageActivity.class);
+		startActivity(i);
 	}
 	
 	private void buildActivityUi () {
@@ -91,6 +93,21 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	protected void onResume() {
 		super.onResume();
 		Log.d(TAG, "onResume()");
+		
+		/**
+		 * If there is no NFC tag (ex. first launch), 
+		 * open RegisterTagActivity and finish.
+		 */
+		if ( mPrefHelper.getTags() == null || mPrefHelper.getTags().size() == 0) {
+			registerFirstTag();
+			return;
+		} else {
+			Log.d(TAG, "Registered tags: " + mPrefHelper.getTags().size());
+			Iterator<String> tags = mPrefHelper.getTags().iterator();
+			while (tags.hasNext()) {
+				Log.d(TAG, "  " + tags.next());
+			}
+		}
 		
 		if ( WakeUpService.isRunning(getApplicationContext()) ) {
 			Log.d(TAG, "onResume(): Started, but alarm is ringing, so switching to correct view");
@@ -122,6 +139,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		boolean alarmOn = !mAlarmMgmt.getSelectedAlarm().getEnabled();
 		mAlarmMgmt.getSelectedAlarm().setEnabled(alarmOn);
 		mAlarmMgmt.commit();
+		mAlarmMgmt.persist();
 		
 		Intent triggerAlarmService = new Intent(getApplicationContext(), AlarmTrigger.class);
 		startService(triggerAlarmService);	
@@ -149,24 +167,22 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.menu, menu);
+	    inflater.inflate(R.menu.main_menu, menu);
 	    return true;
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.reset:
-			Log.d(TAG, "Clearing preferences");
-			
-			mPrefHelper.clearAll();
-			finish();	
-			break;
 		case R.id.attribution:
 			Log.d(TAG, "Displaying attribution info");
 			
 			showAboutDialog();
 			
+			break;
+		case R.id.manageTags:
+			Log.d(TAG, "Registerin new, additional tag");
+			manageTags();
 			break;
 		}
 		
@@ -251,9 +267,11 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		if ( alarm.getEnabled() ) {
 			Log.d(TAG, "refreshIntrefaceEnabled(): Alarm enabled");
 			enableBtn.setText(R.string.disable_alarm);
+			mTimeOfDay.setEnabled(false);
 		} else {
 			Log.d(TAG, "refreshIntrefaceEnabled(): Alarm disabled");
 			enableBtn.setText(R.string.enable_alarm);
+			mTimeOfDay.setEnabled(true);
 		}
 	}
 

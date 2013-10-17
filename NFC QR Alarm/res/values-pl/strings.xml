@@ -64,4 +64,10 @@
     <string name="no_nfc_present_title">Nie wspierane urządzenie</string>
     <string name="no_nfc_present_desc">To urządzenie nie posiada modułu NFC.\n\nNiestety, jest on konieczny do korzystania z aplikacji.</string>
     <string name="no_nfc_present_quit">Zamknij aplikację</string>
+    
+    <string name="title_activity_tag_manage">Tagi NFC</string>
+    <string name="manage_tags">Tagi</string>
+    <string name="remove_tag">Usuń</string>
+    <string name="cant_remove_last_tag">Tchórzliwie odmawiam usunięcia ostatniego taga. Jak wyłączyłbyś jutro budzik?</string>
+    
 </resources>

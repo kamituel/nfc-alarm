@@ -1,8 +1,12 @@
 package pl.kamituel.nfc_qr_alarm;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class PrefHelper {
 	@SuppressWarnings("unused")
@@ -11,22 +15,57 @@ public class PrefHelper {
 	private SharedPreferences mPrefs = null;
 	
 	public final static long ALARM_TIME_DEFAULT = 3600 * 7;
-	private final static String PREF_TAG_ID = "tag_id";
+	
+	@Deprecated
+	private final static String PREF_TAG_ID_OLD = "tag_id";
+	
+	private final static String PREF_TAG = "tag_set";
+	
 	public final static String PREF_ALARMS = "alarms";
 	
 	public PrefHelper (Context ctx) {
 		assert(ctx!=null);
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		
+		if (getTags() == null) {
+			// Attempt to migrate from PREF_TAG_ID_OLD (string, single tag)
+			// to PREF_TAG (string set, multiple tags)
+			String tag = mPrefs.getString(PREF_TAG_ID_OLD, null);
+			if (tag != null) {
+				saveTag(tag);
+				
+				SharedPreferences.Editor prefsEdit = mPrefs.edit();
+				prefsEdit.remove(PREF_TAG_ID_OLD);
+				prefsEdit.commit();
+			}
+		}
 	}
 	
 	public void saveTag (String tag) {
+		Set<String> tags = getTags();
+		if (tags == null) {
+			tags = new HashSet<String>();
+		}
+		
+		tags.add(tag);
+		
 		SharedPreferences.Editor prefsEdit = mPrefs.edit();
-		prefsEdit.putString(PREF_TAG_ID, tag);
+		prefsEdit.putStringSet(PREF_TAG, tags);
 		prefsEdit.commit();	
 	}
 	
-	public String getTag () {
-		return mPrefs.getString(PREF_TAG_ID, null);
+	public void removeTag (String tag) {
+		Log.d("asd", "Removing " + tag);
+		Set<String> tags = getTags();
+		tags.remove(tag);
+		
+		SharedPreferences.Editor prefsEdit = mPrefs.edit();
+		prefsEdit.putStringSet(PREF_TAG, tags);
+		prefsEdit.commit();
+	}
+	
+	public Set<String> getTags () {
+		return mPrefs.getStringSet(PREF_TAG, null);
 	}
 	
 	public void clearAll () {

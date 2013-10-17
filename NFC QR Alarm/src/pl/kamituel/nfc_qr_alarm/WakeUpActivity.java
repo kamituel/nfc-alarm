@@ -1,5 +1,7 @@
 package pl.kamituel.nfc_qr_alarm;
 
+import java.util.Set;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,9 +48,9 @@ public class WakeUpActivity extends NfcActivity {
 	protected void tagReceived(String tagId) {
 		Log.d(TAG, "Tag received: "+tagId);
 
-		String storedTagId = mPrefHelper.getTag();
+		Set<String> storedTags = mPrefHelper.getTags();
 
-		if ( storedTagId.equals(tagId) ) {
+		if ( storedTags.contains(tagId) ) {
 			disableAlarmAndQuit();
 		} else {
 			Toast.makeText(getApplicationContext(), "This is not the correct tag", Toast.LENGTH_LONG).show();

@@ -104,7 +104,7 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 		mSeconds = mSeconds % (24*TimeUtils.HOUR);
 		
 		//if ( !Utils.RUNS_IN_EMULATOR ) {
-			mSeconds = mSeconds - (mSeconds % TIME_RESOLUTION);
+		//	mSeconds = mSeconds - (mSeconds % TIME_RESOLUTION);
 		//}
 	}
 	

@@ -1,53 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.kamituel.nfc_qr_alarm"
+    android:installLocation="internalOnly"
     android:versionCode="6"
-    android:versionName="1.0.6"
-    android:installLocation="internalOnly">
+    android:versionName="1.0.6" >
 
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="17" />
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.NFC" />
-    
+
     <!-- For Google Anayltics -->
     <uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-	<uses-feature android:name="android.hardware.nfc" android:required="true"  />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
 
-	<supports-screens android:requiresSmallestWidthDp="320"/>
-	
-    <application android:label="@string/welcome_activity_name"
+    <supports-screens android:requiresSmallestWidthDp="320" />
+
+    <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/AppTheme">
-        <activity 
-            android:label="@string/welcome_activity_name"  
-            android:launchMode="singleTask" 
-            android:screenOrientation="portrait"
+        android:label="@string/welcome_activity_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="pl.kamituel.nfc_qr_alarm.MainActivity"
             android:exported="true"
-            android:name=".MainActivity">
+            android:label="@string/welcome_activity_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:label="@string/welcome_activity_name" 
-            android:name=".RegisterTagActivity" 
-            android:screenOrientation="portrait"
+        <activity
+            android:name="pl.kamituel.nfc_qr_alarm.RegisterTagActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:label="@string/welcome_activity_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
         </activity>
-        <activity 
-            android:label="@string/welcome_activity_name"  
-            android:name=".WakeUpActivity" 
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask">
+        <activity
+            android:name="pl.kamituel.nfc_qr_alarm.WakeUpActivity"
+            android:label="@string/welcome_activity_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
         </activity>
-        <service android:name=".WakeUpService"></service>
-        <service android:name=".AlarmTrigger"></service>
+
+        <service android:name="pl.kamituel.nfc_qr_alarm.WakeUpService" >
+        </service>
+        <service android:name="pl.kamituel.nfc_qr_alarm.AlarmTrigger" >
+        </service>
+
+        <activity
+            android:name="pl.kamituel.nfc_qr_alarm.TagManageActivity"
+            android:label="@string/title_activity_tag_manage"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>
