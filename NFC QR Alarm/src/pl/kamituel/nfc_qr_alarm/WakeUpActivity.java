@@ -2,6 +2,7 @@ package pl.kamituel.nfc_qr_alarm;
 
 import java.util.Set;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,17 +31,12 @@ public class WakeUpActivity extends NfcActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+				
 		setContentView(R.layout.wake_up_activity);
 		mPrefHelper = new PrefHelper(getApplicationContext());
 
 		if ( Utils.RUNS_IN_EMULATOR ) {
-			TextView v = (TextView) findViewById(R.id.goodMorning1TV);
-			v.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					disableAlarmAndQuit();
-				}
-			});
+			disableAlarmWhenTitleClicked();
 		}
 	}
 	
@@ -55,6 +51,42 @@ public class WakeUpActivity extends NfcActivity {
 		} else {
 			Toast.makeText(getApplicationContext(), "This is not the correct tag", Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override 
+	protected void onResume () {
+		super.onResume();
+		acquireWakeLock();
+	}
+	
+	@Override
+	protected void onPause () {
+		super.onPause();
+		releaseWakeLock();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		
+		EasyTracker.getInstance().activityStop(this);
+	}
+	
+	private void disableAlarmWhenTitleClicked() {
+		TextView v = (TextView) findViewById(R.id.goodMorning1TV);
+		v.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				disableAlarmAndQuit();
+			}
+		});
 	}
 	
 	private void disableAlarmAndQuit () {
@@ -114,46 +146,6 @@ public class WakeUpActivity extends NfcActivity {
 		return String.format("%.1f", msecLeft/1000f);
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	@Override 
-	protected void onResume () {
-		super.onResume();
-		acquireWakeLock();
-	}
-	
-	@Override
-	protected void onPause () {
-		super.onPause();
-		releaseWakeLock();
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		
-		EasyTracker.getInstance().activityStop(this);
-	}
-	
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		Log.d(TAG, "restoer instance state()");
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		
-		Log.d(TAG, "save instance state()");
-	}
 	
 	private void sendCommand (int cmd) {
 		Log.d(TAG, "sendCommand "+cmd);
@@ -175,10 +167,7 @@ public class WakeUpActivity extends NfcActivity {
 		
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON 
-				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-				| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-				| WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-				| WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 	}
 	
 	private final void releaseWakeLock () {
