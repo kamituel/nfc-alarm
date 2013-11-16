@@ -148,8 +148,11 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		mAlarmMgmt.commit();
 		mAlarmMgmt.persist();
 		
-		mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
-		//mAlarmTrigger.schedule(5 * 1000);
+		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
+			mAlarmTrigger.schedule(5 * 1000);
+		} else {
+			mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
+		}
 	}
 
 	@Override

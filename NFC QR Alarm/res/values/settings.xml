@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="debug" type="bool">false</item>
+    <!-- Enable all debug settings -->
+    <item name="debug" type="bool">true</item>
+    
+    <!-- When true, alarm will be silent. -->
     <item name="debug_alarm_muted" type="bool">false</item>
+    
+    <!-- When true, rounding alarm time (every 5 minutes) will be disabled -->
     <item name="debug_alarm_time_every_minute" type="bool">true</item>
+    
+    <!-- Regardless of time set, alarm will go off in five seconds. -->
+    <item name="debug_alarm_in_5_sec" type="bool">true</item>
     
     <item name="logcat_monitor" type="bool">true</item>
     <item name="logcat_dump_file" type="string">pl.kamituel.nfc_qr_alarm.txt</item>
