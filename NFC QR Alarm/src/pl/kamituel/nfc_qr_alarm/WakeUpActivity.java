@@ -1,8 +1,8 @@
 package pl.kamituel.nfc_qr_alarm;
 
+import java.util.Locale;
 import java.util.Set;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -57,7 +57,7 @@ public class WakeUpActivity extends NfcActivity {
 	protected void onStart() {
 		super.onStart();
 		
-		EasyTracker.getInstance().activityStart(this);
+		EasyTracker.getInstance(this).activityStart(this);
 	}
 	
 	@Override 
@@ -76,7 +76,7 @@ public class WakeUpActivity extends NfcActivity {
 	protected void onStop() {
 		super.onStop();
 		
-		EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 	
 	private void disableAlarmWhenTitleClicked() {
@@ -103,12 +103,12 @@ public class WakeUpActivity extends NfcActivity {
 		final int iterations = (SNOOZE_TIME_SEC*1000) / sleepTime;
 		final ProgressBar snoozePB = (ProgressBar) findViewById(R.id.snoozePB);
 		final Button snoozeB = (Button) findViewById(R.id.snoozeBTN);
-
+		
 		v.setEnabled(false);
 		sendCommand(WakeUpService.CMD_SNOOZE_ALARM);
 
 		Log.d(TAG, "Snooze animation iterations: "+iterations);
-
+		
 		snoozePB.setMax(iterations);
 		snoozePB.setProgress(iterations);
 		new Thread(new Runnable() {
@@ -143,7 +143,7 @@ public class WakeUpActivity extends NfcActivity {
 	}
 	
 	private String getSnoozeBtnTime (int msecLeft) {
-		return String.format("%.1f", msecLeft/1000f);
+		return String.format(Locale.ENGLISH, "%.1f", msecLeft/1000f);
 	}
 
 	

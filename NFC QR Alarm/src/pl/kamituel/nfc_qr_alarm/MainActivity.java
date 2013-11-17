@@ -1,6 +1,8 @@
 package pl.kamituel.nfc_qr_alarm;
 
+import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -235,7 +237,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		super.onStart();
 		Log.d(TAG, "onStart()");
 		
-		EasyTracker.getInstance().activityStart(this);
+		EasyTracker.getInstance(this).activityStart(this);
 	}
 
 	@Override
@@ -243,7 +245,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		super.onStop();
 		Log.d(TAG, "onStop()");
 		
-		EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 	
 	private void refreshInterfaceTime () {

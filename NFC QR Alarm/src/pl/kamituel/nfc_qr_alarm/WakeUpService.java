@@ -1,6 +1,8 @@
 package pl.kamituel.nfc_qr_alarm;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -29,6 +31,9 @@ public class WakeUpService extends Service {
 	public static final int CMD_SNOOZE_ALARM = 3;
 	public static final int CMD_UNSNOOZE_ALARM = 4;
 
+	private int mAnalyticsSnoozeCount;
+	private long mAnalyticsAlarmStartTime;
+	
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -76,6 +81,8 @@ public class WakeUpService extends Service {
 			mRunning = true;
 			goIntoForeground();
 			
+			analyticsInit();
+			
 			ensureVolumeUp();
 			startPlayback();
 			
@@ -93,11 +100,13 @@ public class WakeUpService extends Service {
 			if (mRunning) {
 				stopPlayback();
 				mRunning = false;
+				analyticsAlarmStopped();
 			}
 			break;
 		case CMD_SNOOZE_ALARM:
 			if (mRunning) {
 				mPlayer.pause();
+				analyticsAlarmSnoozed();
 			}
 			break;
 		case CMD_UNSNOOZE_ALARM:
@@ -194,5 +203,24 @@ public class WakeUpService extends Service {
 	    }
 	    return false;
 	}
-
+	
+	private void analyticsInit() {
+		mAnalyticsAlarmStartTime = System.nanoTime() / (1000 * 1000 * 1000);
+		mAnalyticsSnoozeCount = 0;
+		
+		// Technically, this should be reported in MainActivity, upon alarm set.
+		Calendar now = Calendar.getInstance(Locale.getDefault());
+		long timeSinceMidnightSeconds = now.get(Calendar.HOUR_OF_DAY) * 60 * 60 
+				+ now.get(Calendar.MINUTE) * 60;
+		MyAnalytics.alarmSet(this, timeSinceMidnightSeconds);
+	}
+	
+	private void analyticsAlarmStopped() {
+		MyAnalytics.alarmDisabled(this, System.nanoTime() / (1000 * 1000 * 1000) - mAnalyticsAlarmStartTime);
+		MyAnalytics.alarmSnoozeCount(this, mAnalyticsSnoozeCount);
+	}
+	
+	private void analyticsAlarmSnoozed() {
+		mAnalyticsSnoozeCount += 1;
+	}
 }
