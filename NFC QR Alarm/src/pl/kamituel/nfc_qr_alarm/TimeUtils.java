@@ -31,9 +31,15 @@ public class TimeUtils {
 		return 360f * (seconds % TWELVE_HOUR) / (float)TWELVE_HOUR; 
 	}
 	
-	public static Date getTimeFromSecondsFromMidnight (int secondsFromMidnight) {		
+	/**
+	 * Calculate number of seconds from midnight, today, local time.
+	 * @param secondsFromMidnight
+	 * @param time24 True, if time is in 24 hour format.
+	 * @return
+	 */
+	public static Date getTimeFromSecondsFromMidnight (int secondsFromMidnight, boolean time24) {		
 		Calendar c = Calendar.getInstance();
-		c.set(Calendar.HOUR, 0);
+		c.set(time24 ? Calendar.HOUR_OF_DAY : Calendar.HOUR, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);

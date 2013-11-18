@@ -12,6 +12,6 @@
     <!-- Regardless of time set, alarm will go off in five seconds. -->
     <item name="debug_alarm_in_5_sec" type="bool">true</item>
     
-    <item name="logcat_monitor" type="bool">true</item>
+    <item name="logcat_monitor" type="bool">false</item>
     <item name="logcat_dump_file" type="string">pl.kamituel.nfc_qr_alarm.txt</item>
 </resources>

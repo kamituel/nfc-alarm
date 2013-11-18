@@ -2,12 +2,10 @@ package pl.kamituel.nfc_qr_alarm;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -20,7 +18,7 @@ public class AlarmTrigger {
 	
 	private Context mCtx;
 	private AlarmManager mAlarmManager;
-	
+		
 	public AlarmTrigger (Context ctx) {		
 		mAlarmManager = (AlarmManager) ctx.getSystemService(Activity.ALARM_SERVICE);
 		mCtx = ctx;
@@ -34,7 +32,7 @@ public class AlarmTrigger {
 		
 		Calendar alarmTime = new GregorianCalendar();
 		alarmTime.add(Calendar.MILLISECOND, millis);
-		
+
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), getPendingIntent());
 	}
 	

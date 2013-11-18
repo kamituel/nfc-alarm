@@ -150,10 +150,14 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		mAlarmMgmt.commit();
 		mAlarmMgmt.persist();
 		
-		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
-			mAlarmTrigger.schedule(5 * 1000);
+		if (alarmOn) {
+			if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
+				mAlarmTrigger.schedule(5 * 1000);
+			} else {
+				mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
+			}
 		} else {
-			mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
+			mAlarmTrigger.cancel();
 		}
 	}
 
@@ -250,7 +254,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	
 	private void refreshInterfaceTime () {
 		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
-		mTime.setText(TimeUtils.getTimeFormatted(TimeUtils.getTimeFromSecondsFromMidnight(alarm.get())));
+		mTime.setText(TimeUtils.getTimeFormatted(TimeUtils.getTimeFromSecondsFromMidnight(alarm.get(), false)));
 	}
 	
 	private void refreshInterfaceTimeOfDay () {
