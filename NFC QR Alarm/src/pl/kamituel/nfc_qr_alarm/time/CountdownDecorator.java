@@ -12,7 +12,6 @@ public class CountdownDecorator {
 	}
 	
 	public int getMinutes() {
-		long hours = mTime.getAlarmCountdown() / Time.HOUR;
-		return (int)((mTime.getAlarmCountdown() - hours * Time.HOUR) / Time.MINUTE);
+		return (int)((mTime.getAlarmCountdown() - getHours() * Time.HOUR) / Time.MINUTE);
 	}
 }
