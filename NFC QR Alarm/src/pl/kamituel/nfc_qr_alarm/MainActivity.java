@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Locale;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -41,7 +42,6 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	private Spinner mTimeOfDay = null;
 	
 	private AlarmMgmt mAlarmMgmt = null;
-	private AlarmTrigger mAlarmTrigger = null;
 	
 	private Handler mTimeOfDaySpinnerHandler = new Handler();
 	
@@ -54,7 +54,6 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		
 		mAlarmMgmt = new AlarmMgmt(this);
 		mPrefHelper = new PrefHelper(this);
-		mAlarmTrigger = new AlarmTrigger(this);
 	
 		setContentView(R.layout.main_layout);
 		buildActivityUi();
@@ -150,14 +149,21 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		mAlarmMgmt.commit();
 		mAlarmMgmt.persist();
 		
-		if (alarmOn) {
-			if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
-				mAlarmTrigger.schedule(5 * 1000);
-			} else {
-				mAlarmTrigger.schedule(mAlarmMgmt.getSelectedAlarm().getCountdown() * 1000);
-			}
+		AlarmTrigger<WakeUpService> trigger;
+		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
+			Calendar now = Calendar.getInstance();
+			now.add(Calendar.SECOND, 5);
+			AlarmTime time = new AlarmTime();
+			time.set((int)(now.getTimeInMillis() / 1000));
+			trigger = new AlarmTrigger<WakeUpService>(this, WakeUpService.class, time);
 		} else {
-			mAlarmTrigger.cancel();
+			trigger = new AlarmTrigger<WakeUpService>(this, WakeUpService.class, mAlarmMgmt.getSelectedAlarm());
+		}
+		
+		if (alarmOn) {
+			trigger.schedule();
+		} else {
+			trigger.cancel();
 		}
 	}
 

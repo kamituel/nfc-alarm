@@ -10,7 +10,7 @@ public class AlarmTimeTest extends AndroidTestCase {
 	private static final int M = TimeUtils.MINUTE;
 	private static final int H = TimeUtils.HOUR;
 	
-	public void testSorting () {
+	/*public void testSorting () {
 		AlarmMgmt am = new AlarmMgmt(getContext());
 		
 		AlarmTime a1 = TestTools.getTime(6*H, true);
@@ -76,5 +76,5 @@ public class AlarmTimeTest extends AndroidTestCase {
 		AlarmTime a1 = TestTools.getTime(20*H+12, true);
 		a1.add(6*H);
 		assertEquals(2*H, a1.get());
-	}
+	}*/
 }

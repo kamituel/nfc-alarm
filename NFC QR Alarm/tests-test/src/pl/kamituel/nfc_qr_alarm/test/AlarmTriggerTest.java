@@ -1,45 +1,22 @@
 package pl.kamituel.nfc_qr_alarm.test;
 
-import java.util.Calendar;
-import java.util.Locale;
-
-import pl.kamituel.nfc_qr_alarm.AlarmMgmt;
 import pl.kamituel.nfc_qr_alarm.AlarmTrigger;
-import pl.kamituel.nfc_qr_alarm.TimeUtils;
 import pl.kamituel.nfc_qr_alarm.WakeUpService;
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.test.ServiceTestCase;
+import android.test.AndroidTestCase;
 
-public class AlarmTriggerTest extends ServiceTestCase<AlarmTrigger> {
-
-	public AlarmTriggerTest () {
-		super(AlarmTrigger.class);
-	}
-	
-	public AlarmTriggerTest(Class<AlarmTrigger> serviceClass) {
-		super(serviceClass);
-	}
-	
-	public void testOneAlarm () throws InterruptedException {
-		AlarmMgmt am = new AlarmMgmt(getContext());
+public class AlarmTriggerTest extends AndroidTestCase {
+	/*public void testScheduleIn5Sec() {
+		AlarmTrigger trigger = new AlarmTrigger(getContext());
 		
-		Calendar ac = Calendar.getInstance(Locale.getDefault());
-		int time = ac.get(Calendar.HOUR_OF_DAY)*TimeUtils.HOUR
-				+ ac.get(Calendar.MINUTE)*TimeUtils.MINUTE
-				+ ac.get(Calendar.SECOND);
-		am.addAlarm(TestTools.getTime(time, true), false);
-		am.persist();
+		int requestCode = 12345; // Same as in AlarmTrigger.java
+		int alarmIn = 5000; // 5 sec
+		trigger.schedule(alarmIn);
 		
-		assertFalse(WakeUpService.isRunning(getContext()));
-		
-		Intent i = new Intent(getContext(), AlarmTrigger.class);
-		startService(i);
-		
-		Thread.sleep(1*1000);
-		
-		assertTrue(WakeUpService.isRunning(getContext()));
-		
-		AlarmTrigger2Test.sendCommand(getContext(), WakeUpService.CMD_STOP_ALARM);
-		Thread.sleep(3000);
-	}
+		Intent intent = new Intent(getContext(), WakeUpService.class);
+		intent.putExtra(WakeUpService.COMMAND, WakeUpService.CMD_START_ALARM);
+		boolean alarmUp = (PendingIntent.getService(getContext(), requestCode, intent, PendingIntent.FLAG_NO_CREATE)) != null;
+		assertEquals(true, alarmUp);
+	}*/
 }

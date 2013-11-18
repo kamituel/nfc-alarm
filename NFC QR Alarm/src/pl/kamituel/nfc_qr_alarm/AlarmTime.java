@@ -61,7 +61,7 @@ public class AlarmTime extends TaggableObject implements Comparable<AlarmTime> {
 	}
 	
 	public int getCountdownMinutes () {
-		return (getCountdown()-getCountdownHours()*TimeUtils.HOUR)/TimeUtils.MINUTE;
+		return (getCountdown()-getCountdownHours() * TimeUtils.HOUR)/TimeUtils.MINUTE;
 	}
 	
 	public void set (int seconds) {
