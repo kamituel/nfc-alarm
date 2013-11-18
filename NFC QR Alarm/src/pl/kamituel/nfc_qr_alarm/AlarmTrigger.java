@@ -11,9 +11,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class AlarmTrigger<T extends Service> {
+public class AlarmTrigger {
 	private final static String TAG = AlarmTrigger.class.getSimpleName();
-	private Class<T> mType;
 	
 	/* Not currently used by PendingIntent API */
 	private final static int REQUEST_CODE = 12345;
@@ -22,10 +21,9 @@ public class AlarmTrigger<T extends Service> {
 	private AlarmManager mAlarmManager;
 	private AlarmTime mAlarm;
 		
-	public AlarmTrigger (Context ctx, Class<T> type, AlarmTime alarm) {		
+	public AlarmTrigger (Context ctx, AlarmTime alarm) {		
 		mAlarmManager = (AlarmManager) ctx.getSystemService(Activity.ALARM_SERVICE);
 		mCtx = ctx;
-		mType = type;
 		mAlarm = alarm;
 	}
 
@@ -49,7 +47,7 @@ public class AlarmTrigger<T extends Service> {
 	}
 	
 	private PendingIntent getPendingIntent () {
-		Intent intent = new Intent(mCtx, mType.getClass());
+		Intent intent = new Intent(mCtx, WakeUpService.class);
 		intent.putExtra(WakeUpService.COMMAND, WakeUpService.CMD_START_ALARM);
 		
 		return PendingIntent.getService(

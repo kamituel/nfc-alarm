@@ -149,15 +149,15 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		mAlarmMgmt.commit();
 		mAlarmMgmt.persist();
 		
-		AlarmTrigger<WakeUpService> trigger;
+		AlarmTrigger trigger;
 		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
 			Calendar now = Calendar.getInstance();
 			now.add(Calendar.SECOND, 5);
 			AlarmTime time = new AlarmTime();
 			time.set((int)(now.getTimeInMillis() / 1000));
-			trigger = new AlarmTrigger<WakeUpService>(this, WakeUpService.class, time);
+			trigger = new AlarmTrigger(this, time);
 		} else {
-			trigger = new AlarmTrigger<WakeUpService>(this, WakeUpService.class, mAlarmMgmt.getSelectedAlarm());
+			trigger = new AlarmTrigger(this, mAlarmMgmt.getSelectedAlarm());
 		}
 		
 		if (alarmOn) {
