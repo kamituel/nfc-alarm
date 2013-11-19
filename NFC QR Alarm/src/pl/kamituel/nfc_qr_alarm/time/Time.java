@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * All values are in milliseconds.
  * @author kls
@@ -18,6 +21,7 @@ public class Time {
 	 * Number of milliseconds since midnight.
 	 * Value in range <0; 24*HOUR).
 	 */
+	@Expose @SerializedName("msec_since_midnight")
 	private long mValue;
 	
 	/**
@@ -61,6 +65,16 @@ public class Time {
 		return new Time(mValue);
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Time) {
+			Time oTime = (Time) o;
+			return oTime.mValue == mValue;
+		} else {
+			return false;
+		}
+	}
+
 	public long getTimeFromMidnight() {
 		return mValue;
 	}

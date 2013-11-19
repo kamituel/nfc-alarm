@@ -1,34 +1,33 @@
 package pl.kamituel.nfc_qr_alarm.test;
 
-import java.security.InvalidParameterException;
-
-import pl.kamituel.nfc_qr_alarm.time.JsonTimeSerializer;
 import pl.kamituel.nfc_qr_alarm.time.Time;
+import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer;
 import android.test.AndroidTestCase;
 
 public class JsonTimeSerializerTest extends AndroidTestCase {
 	public void testToJson() {
 		Time t1 = Time.makeAbsolute(13 * Time.HOUR + 12 * Time.MINUTE + 15 * Time.SECOND);
-		String expected = "{\"seconds_since_midnight\":47535000}";
-		JsonTimeSerializer serializer = new JsonTimeSerializer(t1);
+		String expected = "{\"msec_since_midnight\":47535000}";
+		String value = JsonSerializer.toJson(t1);
 		
-		assertEquals(expected, serializer.toJson());
+		assertEquals(expected, value);
 	}
 	
 	public void testFromJson() {
-		String json = "{\"seconds_since_midnight\":47535000}";
-		Time t1 = JsonTimeSerializer.fromJson(json);
+		String json = "{\"msec_since_midnight\":47535000}";
+		Time value = JsonSerializer.fromJson(json, Time.class);
 		Time expected = Time.makeAbsolute(47535000);
 		
-		assertEquals(expected.getTimeFromMidnight(), t1.getTimeFromMidnight());
+		assertEquals(expected, value);
 	}
 	
-	public void testThrowsWhenInvalidSyntax() {
+	/*public void testThrowsWhenInvalidSyntax() {
 		// Missing closing bracket
-		String json = "{\"seconds_since_midnight\":47535000";
+		String json = "{\"msec_since_midnight\":47535000";
 		
 		try {
-			JsonTimeSerializer.fromJson(json);
+			Time t = JsonSerializer.fromJson(json, Time.class);
+			Log.d("xxx", "?????? " + t);
 		} catch (InvalidParameterException e) {
 			assertTrue(true);
 			return;
@@ -38,15 +37,15 @@ public class JsonTimeSerializerTest extends AndroidTestCase {
 	}
 
 	public void testThrowsWhenInvalidNumber() {
-		String json = "{\"seconds_since_midnight\":47535d000}";
+		String json = "{\"msec_since_midnight\":4753500d0}";
 
 		try {
-			JsonTimeSerializer.fromJson(json);
+			JsonSerializer.fromJson(json, Time.class);
 		} catch (InvalidParameterException e) {
 			assertTrue(true);
 			return;
 		}
 
 		assertTrue("Exception expected", false);
-	}
+	}*/
 }
