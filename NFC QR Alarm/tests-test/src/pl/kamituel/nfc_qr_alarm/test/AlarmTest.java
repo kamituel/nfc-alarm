@@ -24,6 +24,6 @@ public class AlarmTest extends AndroidTestCase {
 	public void testGetTime() {
 		Alarm a1 = new Alarm(Time.makeAbsolute(5), true);
 		long expected = 5l;
-		assertEquals(expected, a1.getTime().getTimeFromMidnight());
+		assertEquals(expected, a1.getTime().getAbsolute());
 	}
 }

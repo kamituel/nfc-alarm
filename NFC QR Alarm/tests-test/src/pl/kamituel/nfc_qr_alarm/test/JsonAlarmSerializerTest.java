@@ -3,6 +3,7 @@ package pl.kamituel.nfc_qr_alarm.test;
 import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
 import pl.kamituel.nfc_qr_alarm.time.Time;
 import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer;
+import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer.InvalidJsonException;
 import android.test.AndroidTestCase;
 
 public class JsonAlarmSerializerTest extends AndroidTestCase {
@@ -16,7 +17,7 @@ public class JsonAlarmSerializerTest extends AndroidTestCase {
 		assertTrue("Invalid: <<" + value + ">>", isValid);
 	}
 	
-	public void testFromJson() {
+	public void testFromJson() throws InvalidJsonException {
 		Time t1 = Time.makeAbsolute(5);
 		String json = "{\"enabled\":true,\"time\":" + JsonSerializer.toJson(t1) + "}";
 		

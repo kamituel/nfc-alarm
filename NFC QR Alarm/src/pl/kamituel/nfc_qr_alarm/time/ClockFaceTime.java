@@ -8,11 +8,14 @@ public class ClockFaceTime {
 	}
 	
 	public static Time fromAngle(double angle, boolean amTime) {
-		long msec = (long)((angle / 360f) * 12 * Time.HOUR + (amTime ? 0 : 12 * Time.HOUR));
-		return Time.makeAbsolute(msec);
+		return Time.makeAbsolute(millisecondsFromAngle(angle, amTime));
+	}
+	
+	public static long millisecondsFromAngle(double angle, boolean amTime) {
+		return (long)((angle / 360f) * 12 * Time.HOUR + (amTime ? 0 : 12 * Time.HOUR));
 	}
 	
 	public double getAngle() {
-		return 360d * (mTime.getTimeFromMidnight() % (12 * Time.HOUR)) / (double) (12 * Time.HOUR); 
+		return 360d * (mTime.getAbsolute() % (12 * Time.HOUR)) / (double) (12 * Time.HOUR); 
 	}
 }

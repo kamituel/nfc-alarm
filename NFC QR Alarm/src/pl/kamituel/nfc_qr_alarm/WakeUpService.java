@@ -88,7 +88,8 @@ public class WakeUpService extends Service {
 			
 			AlarmMgmt alarmMgmt = new AlarmMgmt(this);
 			alarmMgmt.restore();
-			alarmMgmt.getSelectedAlarm().setEnabled(false);			
+			// Valid, until only one alarm supported.
+			alarmMgmt.getAlarms().get(0).setEnabled(false);			
 			alarmMgmt.persist();
 			
 			Intent i = new Intent(this, WakeUpActivity.class);

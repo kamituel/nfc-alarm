@@ -4,6 +4,7 @@ import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
 import pl.kamituel.nfc_qr_alarm.alarm.AlarmList;
 import pl.kamituel.nfc_qr_alarm.time.Time;
 import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer;
+import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer.InvalidJsonException;
 import android.test.AndroidTestCase;
 
 public class JsonAlarmListSerializerTest extends AndroidTestCase {
@@ -22,7 +23,7 @@ public class JsonAlarmListSerializerTest extends AndroidTestCase {
 		assertTrue("Invalid: <<" + value + ">>", isValid);
 	}
 	
-	public void testFromJson() {
+	public void testFromJson() throws InvalidJsonException {
 		Alarm a1 = new Alarm(Time.makeAbsolute(5), true);
 		Alarm a2 = new Alarm(Time.makeAbsolute(23), false);
 		String json = "{\"alarms\":[" + JsonSerializer.toJson(a1) + "," 

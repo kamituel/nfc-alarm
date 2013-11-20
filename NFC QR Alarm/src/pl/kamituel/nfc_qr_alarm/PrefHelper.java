@@ -6,25 +6,19 @@ import java.util.Set;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-public class PrefHelper {
-	@SuppressWarnings("unused")
-	private final static String TAG = PrefHelper.class.getSimpleName();
-	
+public class PrefHelper {	
 	private SharedPreferences mPrefs = null;
 	
-	public final static long ALARM_TIME_DEFAULT = 3600 * 7;
+	//public final static long ALARM_TIME_DEFAULT = 3600 * 7;
 	
 	@Deprecated
 	private final static String PREF_TAG_ID_OLD = "tag_id";
 	
 	private final static String PREF_TAG = "tag_set";
-	
-	public final static String PREF_ALARMS = "alarms";
+	private final static String PREF_ALARMS = "alarms";
 	
 	public PrefHelper (Context ctx) {
-		assert(ctx!=null);
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		
 		if (getTags() == null) {
@@ -55,7 +49,6 @@ public class PrefHelper {
 	}
 	
 	public void removeTag (String tag) {
-		Log.d("asd", "Removing " + tag);
 		Set<String> tags = getTags();
 		tags.remove(tag);
 		
@@ -66,6 +59,16 @@ public class PrefHelper {
 	
 	public Set<String> getTags () {
 		return mPrefs.getStringSet(PREF_TAG, null);
+	}
+	
+	public void saveAlarms(String alarmsJson) {
+		SharedPreferences.Editor prefsEdit = mPrefs.edit();
+		prefsEdit.putString(PREF_ALARMS, alarmsJson);
+		prefsEdit.commit();
+	}
+	
+	public String getAlarms() {
+		return mPrefs.getString(PREF_ALARMS, null);
 	}
 	
 	public void clearAll () {

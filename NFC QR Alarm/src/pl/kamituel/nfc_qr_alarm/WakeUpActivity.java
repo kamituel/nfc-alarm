@@ -33,7 +33,7 @@ public class WakeUpActivity extends NfcActivity {
 		super.onCreate(savedInstanceState);
 				
 		setContentView(R.layout.wake_up_activity);
-		mPrefHelper = new PrefHelper(getApplicationContext());
+		mPrefHelper = new PrefHelper(this);
 
 		if ( Utils.RUNS_IN_EMULATOR ) {
 			disableAlarmWhenTitleClicked();

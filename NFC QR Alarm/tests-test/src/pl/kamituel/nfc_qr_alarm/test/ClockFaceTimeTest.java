@@ -9,10 +9,20 @@ public class ClockFaceTimeTest extends DeltaTestCase {
 		boolean amTime = true;
 		Time t1 = ClockFaceTime.fromAngle(angle, amTime);
 		
-		long value = t1.getTimeFromMidnight();
+		long value = t1.getAbsolute();
 		long expected = 614400l;
 		
 		assertTrue("Out of range: " + value + ", expected: " + expected, delta(expected, value));
+	}
+	
+	public void testSecondsFromAngle() {
+		double angle = 264d;
+		boolean amTime = false;
+		
+		long value = ClockFaceTime.millisecondsFromAngle(angle, amTime);
+		long expected = 74880000l;
+		
+		assertEquals(expected, value);
 	}
 	
 	public void testToAngle() {

@@ -2,6 +2,7 @@ package pl.kamituel.nfc_qr_alarm.test;
 
 import pl.kamituel.nfc_qr_alarm.time.Time;
 import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer;
+import pl.kamituel.nfc_qr_alarm.tools.JsonSerializer.InvalidJsonException;
 import android.test.AndroidTestCase;
 
 public class JsonTimeSerializerTest extends AndroidTestCase {
@@ -13,7 +14,7 @@ public class JsonTimeSerializerTest extends AndroidTestCase {
 		assertEquals(expected, value);
 	}
 	
-	public void testFromJson() {
+	public void testFromJson() throws InvalidJsonException {
 		String json = "{\"msec_since_midnight\":47535000}";
 		Time value = JsonSerializer.fromJson(json, Time.class);
 		Time expected = Time.makeAbsolute(47535000);

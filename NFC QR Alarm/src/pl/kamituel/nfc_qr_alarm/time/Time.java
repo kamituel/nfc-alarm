@@ -43,6 +43,11 @@ public class Time {
 	public static Time makeAbsolute(long msec) {
 		return new Time(msec);
 	}
+	
+	public void setAbsolute(long value) {
+		mValue = value;
+		normalize();
+	}
 
 	public long getAlarmCountdown() {
 		return getAlarmCountdown(Calendar.getInstance());
@@ -75,7 +80,10 @@ public class Time {
 		}
 	}
 
-	public long getTimeFromMidnight() {
+	/*
+	 * Returns time from midnight.
+	 */
+	public long getAbsolute() {
 		return mValue;
 	}
 	

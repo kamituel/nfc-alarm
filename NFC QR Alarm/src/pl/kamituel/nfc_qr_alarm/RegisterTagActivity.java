@@ -23,7 +23,7 @@ public class RegisterTagActivity extends NfcActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.register_tag_layout);
-		mPrefHelper = new PrefHelper(getApplicationContext());
+		mPrefHelper = new PrefHelper(this);
 
 		mViewFlipper = (ViewFlipper) findViewById(R.id.introFlipper);
 		mViewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));

@@ -26,7 +26,7 @@ public class TagManageActivity extends NfcActivity implements OnItemClickListene
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tag_manage);
 		
-		mPrefHelper = new PrefHelper(getApplicationContext());
+		mPrefHelper = new PrefHelper(this);
 		
 		ListView tagList = (ListView) findViewById(R.id.tagList);
 		

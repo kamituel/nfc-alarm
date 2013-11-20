@@ -1,7 +1,5 @@
 package pl.kamituel.nfc_qr_alarm.tools;
 
-import java.security.InvalidParameterException;
-
 import com.google.gson.GsonBuilder;
 
 public class JsonSerializer {
@@ -12,14 +10,20 @@ public class JsonSerializer {
 				.toJson(object);
 	}
 	
-	public static <T> T fromJson(String json, Class<T> type) {
+	public static <T> T fromJson(String json, Class<T> type) throws InvalidJsonException {
 		try {
 			return new GsonBuilder()
 				.excludeFieldsWithoutExposeAnnotation()
 				.create()
 				.fromJson(json, type);
 		} catch (Exception e) {
-			throw new InvalidParameterException("Invalid JSON document: <<" + json + ">>");
+			throw new InvalidJsonException("Invalid JSON document: <<" + json + ">>");
+		}
+	}
+	
+	public static class InvalidJsonException extends Exception {
+		public InvalidJsonException(String msg) {
+			super(msg);
 		}
 	}
 }

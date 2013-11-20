@@ -1,10 +1,10 @@
 package pl.kamituel.nfc_qr_alarm;
 
-import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Locale;
 
-
+import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
+import pl.kamituel.nfc_qr_alarm.time.CountdownDecorator;
+import pl.kamituel.nfc_qr_alarm.time.Time;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
-public class MainActivity extends Activity implements OnGlobalLayoutListener, OnItemSelectedListener, AlarmTime.Observer {
+public class MainActivity extends Activity implements OnGlobalLayoutListener, OnItemSelectedListener {
 	private final static String TAG = MainActivity.class.getSimpleName();
 	
 	private ClockSurfaceView mClock = null;
@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	private Spinner mTimeOfDay = null;
 	
 	private AlarmMgmt mAlarmMgmt = null;
+	private int mSelectedAlarm;
 	
 	private Handler mTimeOfDaySpinnerHandler = new Handler();
 	
@@ -72,7 +73,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	
 	private void buildActivityUi () {
         mClock = (ClockSurfaceView) findViewById(R.id.clock);
-        mClock.setAlarmDataProvider(mAlarmMgmt);
+        //mClock.setAlarmDataProvider(mAlarmMgmt);
         mTime = (TextView) findViewById(R.id.timeTV);
 
         mClock.getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -127,40 +128,40 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		
 		mAlarmMgmt.restore();
 		if ( mAlarmMgmt.getAlarms().size() == 0 ) {
-			AlarmTime defaultAlarm = new AlarmTime();
-			defaultAlarm.set((int) PrefHelper.ALARM_TIME_DEFAULT);
-			defaultAlarm.setEnabled(false);
-			mAlarmMgmt.addAlarm(defaultAlarm, true);
-			mAlarmMgmt.commit();
+			long defaultAlarmTime = 7 * Time.HOUR;
+			Alarm defaultAlarm = new Alarm(Time.makeAbsolute(defaultAlarmTime), false);
+			mAlarmMgmt.getAlarms().add(defaultAlarm);
+			mAlarmMgmt.persist();
 		}
-		mAlarmMgmt.getSelectedAlarm().addObserver(this);
-
+		mSelectedAlarm = 0;
+		//mAlarmMgmt.getSelectedAlarm().addObserver(this);
+		mClock.setAlarm(getSelectedAlarm());
+		
 		refreshInterfaceTime();
 		refreshInterfaceTimeOfDay();
 		refreshInterfaceEnabled();
 	}
 
+	private Alarm getSelectedAlarm() {
+		return mAlarmMgmt.getAlarms().get(mSelectedAlarm);
+	}
 
 	public void setAlarm (View v) {
 		Log.d(TAG, "setAlarm(): Setting an alarm or disabling it");
 		
-		boolean alarmOn = !mAlarmMgmt.getSelectedAlarm().getEnabled();
-		mAlarmMgmt.getSelectedAlarm().setEnabled(alarmOn);
-		mAlarmMgmt.commit();
+		boolean isAlarmOn = !getSelectedAlarm().getEnabled();
+		getSelectedAlarm().setEnabled(isAlarmOn);
 		mAlarmMgmt.persist();
 		
 		AlarmTrigger trigger;
 		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
-			Calendar now = Calendar.getInstance();
-			now.add(Calendar.SECOND, 5);
-			AlarmTime time = new AlarmTime();
-			time.set((int)(now.getTimeInMillis() / 1000));
-			trigger = new AlarmTrigger(this, time);
+			Alarm fake = new Alarm(Time.makeRelative(5 * Time.SECOND), true);
+			trigger = new AlarmTrigger(fake.getTime());
 		} else {
-			trigger = new AlarmTrigger(this, mAlarmMgmt.getSelectedAlarm());
+			trigger = new AlarmTrigger(getSelectedAlarm().getTime());
 		}
 		
-		if (alarmOn) {
+		if (isAlarmOn) {
 			trigger.schedule();
 		} else {
 			trigger.cancel();
@@ -219,15 +220,12 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long id) {
-		//if ( pos == mTimeOfDay.getSelectedItemPosition() ) return;
-		
-		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long id) {		
+		Time selectedAlarmTime = getSelectedAlarm().getTime();
 		boolean morning = (pos == 0);
-		if ( (alarm.isMorning() && !morning) || (!alarm.isMorning() && morning) ) {
-			alarm.add(12*TimeUtils.HOUR);
+		if ( (selectedAlarmTime.isMorning() && !morning) || (!selectedAlarmTime.isMorning() && morning) ) {
+			selectedAlarmTime.toggleAmPm();
 		}
-		//mAlarmMgmt.getSelectedAlarm().add(12*TimeUtils.HOUR);
 		mAlarmMgmt.persist();
 	}
 
@@ -259,20 +257,18 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	}
 	
 	private void refreshInterfaceTime () {
-		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
-		mTime.setText(TimeUtils.getTimeFormatted(TimeUtils.getTimeFromSecondsFromMidnight(alarm.get(), false)));
+		CountdownDecorator countdown = new CountdownDecorator(getSelectedAlarm().getTime());
+		mTime.setText(countdown.getHours() + ":" + countdown.getMinutes());
 	}
 	
 	private void refreshInterfaceTimeOfDay () {
-		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
-		mTimeOfDay.setSelection(alarm.isMorning() ? 0 : 1);
+		mTimeOfDay.setSelection(getSelectedAlarm().getTime().isMorning() ? 0 : 1);
 	}
 	
 	private void refreshInterfaceEnabled () {
 		Button enableBtn = (Button) findViewById(R.id.enableAlarmBtn);
-		AlarmTime alarm = mAlarmMgmt.getSelectedAlarm();
 		
-		if ( alarm.getEnabled() ) {
+		if ( getSelectedAlarm().getEnabled() ) {
 			Log.d(TAG, "refreshIntrefaceEnabled(): Alarm enabled");
 			enableBtn.setText(R.string.disable_alarm);
 			mTimeOfDay.setEnabled(false);
@@ -282,7 +278,9 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 			mTimeOfDay.setEnabled(true);
 		}
 	}
-
+	
+	// TODO: not working now
+/*
 	@Override
 	public void timeChanged(final AlarmTime alarm, int newSeconds,
 			boolean timeOfDayChanged) {
@@ -302,9 +300,12 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 			}
 		}
 	}
-
+*/
+	
+	// TODO: not working now
+	/*
 	@Override
 	public void statusChanged(AlarmTime alarm, boolean isEnabled) {
 		refreshInterfaceEnabled();
-	}
+	}*/
 }

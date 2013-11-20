@@ -7,7 +7,7 @@ public class TimeTest extends DeltaTestCase {
 
 	public void testGetTimeFromMidnight() {
 		Time t1 = Time.makeAbsolute(5000);
-		assertEquals(5000, t1.getTimeFromMidnight());
+		assertEquals(5000, t1.getAbsolute());
 	}
 	
 	public void testGetCountdownInFuture() {
@@ -50,7 +50,7 @@ public class TimeTest extends DeltaTestCase {
 			@Override
 			public void onTimeChanged(Time time, Time oldTime) {
 				assertEquals(time, t1);
-				assertEquals(time.getTimeFromMidnight(), 13 * Time.HOUR);
+				assertEquals(time.getAbsolute(), 13 * Time.HOUR);
 			}
 		});
 		
@@ -59,7 +59,7 @@ public class TimeTest extends DeltaTestCase {
 	
 	public void testValidOldTimeInListener() {
 		Time t1 = Time.makeRelative(0);
-		final long timeFromMidnight = t1.getTimeFromMidnight();
+		final long timeFromMidnight = t1.getAbsolute();
 		
 		t1.addOnTimeChangedListener(new OnTimeChangedListener() {
 			@Override
@@ -101,6 +101,12 @@ public class TimeTest extends DeltaTestCase {
 		Time t1 = Time.makeAbsolute(541);
 		Time t2 = Time.makeAbsolute(542);
 		assertFalse("Are equal, shouldn't", t1.equals(t2));
+	}
+	
+	public void testSet() {
+		Time t1 = Time.makeAbsolute(5);
+		t1.setAbsolute(654);
+		assertEquals(654, t1.getAbsolute());
 	}
 	
 	private void helpTestToggleAmPm(Time t1) {
