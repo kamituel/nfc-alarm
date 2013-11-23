@@ -3,8 +3,10 @@ package pl.kamituel.nfc_qr_alarm;
 import java.util.Calendar;
 
 import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
+import pl.kamituel.nfc_qr_alarm.alarm.OnAlarmStateChangedListener;
 import pl.kamituel.nfc_qr_alarm.time.ClockFaceTime;
 import pl.kamituel.nfc_qr_alarm.time.CountdownDecorator;
+import pl.kamituel.nfc_qr_alarm.time.OnTimeChangedListener;
 import pl.kamituel.nfc_qr_alarm.time.Time;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -121,14 +123,56 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 		
 		getHolder().addCallback(this);		
 		setOnTouchListener(this);
+		
+		/*mAlarm = new Alarm(Time.makeAbsolute(0), false);
+		mAlarmClockFace = new ClockFaceTime(mAlarm.getTime());
+		mAlarmCountdown = new CountdownDecorator(mAlarm.getTime());*/
 
 		Log.d(TAG, "ClockSurface created");		
 	}
 	
+	/*public void setAlarmTime(Time time) {
+		mAlarm.getTime().setAbsolute(time.getAbsolute());
+		invalidate();
+		requestLayout();
+	}
+	
+	public Time getAlarmTime() {
+		return mAlarm.getTime();
+	}
+	
+	public void addAlarmTimeChangedListener(OnTimeChangedListener listener) {
+		mAlarm.getTime().addOnTimeChangedListener(listener);
+	}
+	
+	public void setAlarmEnabled(boolean enabled) {
+		mAlarm.setEnabled(enabled);
+		invalidate();
+		requestLayout();
+	}
+	
+	public boolean getAlarmEnabled() {
+		return mAlarm.getEnabled();
+	}*/
+	
 	public void setAlarm(Alarm alarm) {
 		mAlarm = alarm;
 		mAlarmClockFace = new ClockFaceTime(mAlarm.getTime());
-		mAlarmCountdown = new CountdownDecorator(mAlarm.getTime());
+		mAlarmCountdown = new CountdownDecorator(mAlarm);
+		
+		mAlarm.getTime().addOnTimeChangedListener(new OnTimeChangedListener() {
+			@Override
+			public void onTimeChanged(Time time, Time oldTime) {
+				invalidate();
+			}
+		});
+		
+		mAlarm.addListener(new OnAlarmStateChangedListener() {
+			@Override
+			public void onAlarmStateChanged(Alarm alarm, boolean enabled) {
+				invalidate();
+			}
+		});
 	}
 	
 	private float getAlarmHandAngle () {
@@ -286,11 +330,10 @@ public class ClockSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 	}
 
 	private void drawPmIndicator (Canvas c, Calendar calendar) {
-		long milliseconds = mAlarm.getTime().getAlarmCountdown();
-		
-		float countdownAngle = (float) ((milliseconds > 12 * Time.HOUR ? 360 : 0) 
-				+ mAlarmClockFace.getAngle());
-		
+		long millis = mAlarm.getCountdown();
+		float countdownAngle = (float) ((millis < (12 * Time.HOUR) ? 0 : 360) 
+				+ ClockFaceTime.angleFromMillis(mAlarm.getCountdown()));
+				
 		float angle = timeAngle(calendar);
 		
 		c.save();

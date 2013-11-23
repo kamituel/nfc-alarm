@@ -10,30 +10,6 @@ public class TimeTest extends DeltaTestCase {
 		assertEquals(5000, t1.getAbsolute());
 	}
 	
-	public void testGetCountdownInFuture() {
-		Time t = Time.makeRelative(5000);		
-		long value = t.getAlarmCountdown();
-		long expected = 5000;
-		
-		assertTrue("Out of range: " + value + ", expected: " + expected, delta(expected, value));
-	}
-	
-	public void testGetCountdownInFuture2() {
-		Time t = Time.makeRelative(72 * Time.HOUR + 35 * Time.MINUTE);
-		long value = t.getAlarmCountdown();
-		long expected = 35 * Time.MINUTE;
-		
-		assertTrue("Out of range: " + value + ", expected: " + expected, delta(expected, value));
-	}
-	
-	public void testgetCountdownInPast() {
-		Time t = Time.makeRelative(-5000);
-		long value = t.getAlarmCountdown();
-		long expected = 24 * Time.HOUR - 5000;
-		
-		assertTrue("Out of range: " + value + ", expected: " + expected, delta(expected, value));
-	}
-	
 	public void testToggleAmPm() {
 		Time t1 = Time.makeRelative(0);
 		helpTestToggleAmPm(t1);
@@ -57,7 +33,7 @@ public class TimeTest extends DeltaTestCase {
 		t1.toggleAmPm();
 	}
 	
-	public void testValidOldTimeInListener() {
+	public void testValidOldTimeInListenerForTogglePm() {
 		Time t1 = Time.makeRelative(0);
 		final long timeFromMidnight = t1.getAbsolute();
 		
@@ -69,6 +45,20 @@ public class TimeTest extends DeltaTestCase {
 		});
 		
 		t1.toggleAmPm();
+	}
+	
+	public void testValidOldTimeInListenerForSetAbsolute() {
+		Time t1 = Time.makeRelative(0);
+		final long timeFromMidnight = t1.getAbsolute();
+		
+		t1.addOnTimeChangedListener(new OnTimeChangedListener() {
+			@Override
+			public void onTimeChanged(Time time, Time oldTime) {
+				assertEquals(oldTime, Time.makeAbsolute(timeFromMidnight));
+			}
+		});
+		
+		t1.setAbsolute(5);
 	}
 	
 	public void testIsMorning() {
@@ -113,8 +103,8 @@ public class TimeTest extends DeltaTestCase {
 		Time t2 = t1.clone();
 		t2.toggleAmPm();
 		
-		long c1 = t1.getAlarmCountdown();
-		long c2 = t2.getAlarmCountdown();
+		long c1 = t1.getAbsolute();
+		long c2 = t2.getAbsolute();
 		
 		long expected = 12 * Time.HOUR;
 		long value = c1 > c2 ? c1 - c2 : c2 - c1;

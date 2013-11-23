@@ -16,6 +16,10 @@ public class ClockFaceTime {
 	}
 	
 	public double getAngle() {
-		return 360d * (mTime.getAbsolute() % (12 * Time.HOUR)) / (double) (12 * Time.HOUR); 
+		return angleFromMillis(mTime.getAbsolute());
+	}
+	
+	public static double angleFromMillis(long millis) {
+		return 360d * (millis % (12 * Time.HOUR)) / (double) (12 * Time.HOUR);
 	}
 }

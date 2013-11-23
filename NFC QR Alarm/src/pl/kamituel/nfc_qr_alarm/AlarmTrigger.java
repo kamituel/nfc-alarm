@@ -3,7 +3,7 @@ package pl.kamituel.nfc_qr_alarm;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import pl.kamituel.nfc_qr_alarm.time.Time;
+import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,19 +19,19 @@ public class AlarmTrigger {
 	
 	private Context mCtx;
 	private AlarmManager mAlarmManager;
-	private Time mTime;
+	private Alarm mAlarm;
 		
-	public AlarmTrigger (Time time) {
+	public AlarmTrigger (Alarm alarm) {
 		mCtx = NfcAlarmApp.getContext();
 		mAlarmManager = (AlarmManager) mCtx.getSystemService(Activity.ALARM_SERVICE);
-		mTime = time;
+		mAlarm = alarm;
 	}
 
 	/*
 	 * Schedules AlarmTrigger to wake up in 'millis' ms.
 	 */
 	public void schedule () {
-		long millis = mTime.getAlarmCountdown();
+		long millis = mAlarm.getCountdown();
 		Log.d(TAG, "schedule(): Schedule myself to run in " + millis + " ms");
 		
 		Calendar alarmTime = new GregorianCalendar();

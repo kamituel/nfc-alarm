@@ -10,8 +10,6 @@ import android.preference.PreferenceManager;
 public class PrefHelper {	
 	private SharedPreferences mPrefs = null;
 	
-	//public final static long ALARM_TIME_DEFAULT = 3600 * 7;
-	
 	@Deprecated
 	private final static String PREF_TAG_ID_OLD = "tag_id";
 	

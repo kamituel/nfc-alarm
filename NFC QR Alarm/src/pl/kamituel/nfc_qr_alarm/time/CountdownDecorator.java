@@ -1,17 +1,19 @@
 package pl.kamituel.nfc_qr_alarm.time;
 
+import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
+
 public class CountdownDecorator {
-	private Time mTime;
+	private Alarm mAlarm;
 	
-	public CountdownDecorator(Time time) {
-		mTime = time;
+	public CountdownDecorator(Alarm alarm) {
+		mAlarm = alarm;
 	}
 	
 	public int getHours() {
-		return (int)(mTime.getAlarmCountdown() / Time.HOUR);
+		return (int)(mAlarm.getCountdown() / Time.HOUR);
 	}
 	
 	public int getMinutes() {
-		return (int)((mTime.getAlarmCountdown() - getHours() * Time.HOUR) / Time.MINUTE);
+		return (int)((mAlarm.getCountdown() - getHours() * Time.HOUR) / Time.MINUTE);
 	}
 }

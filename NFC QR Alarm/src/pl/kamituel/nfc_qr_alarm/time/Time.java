@@ -3,6 +3,7 @@ package pl.kamituel.nfc_qr_alarm.time;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -27,9 +28,14 @@ public class Time {
 	/**
 	 * Array of listeners to changes in this time.
 	 */
-	private LinkedList<OnTimeChangedListener> mListeners = new LinkedList<OnTimeChangedListener>();
+	private List<OnTimeChangedListener> mListeners;
+	
+	private Time() {
+		mListeners = new LinkedList<OnTimeChangedListener>();
+	}
 	
 	private Time (long value) {
+		this();
 		mValue = value;
 	}
 	
@@ -45,12 +51,12 @@ public class Time {
 	}
 	
 	public void setAbsolute(long value) {
+		Time oldTime = clone();
+		
 		mValue = value;
 		normalize();
-	}
-
-	public long getAlarmCountdown() {
-		return getAlarmCountdown(Calendar.getInstance());
+		
+		notifyListeners(oldTime);
 	}
 	
 	public void toggleAmPm() {
@@ -96,20 +102,6 @@ public class Time {
 		while (listenersIt.hasNext()) {
 			listenersIt.next().onTimeChanged(this, oldTime);
 		}
-	}
-
-	private long getAlarmCountdown(Calendar reference) {
-		long ref = TimeHelperUtils.millisSinceMidnight(reference);
-		long diff = mValue - ref;
-		
-		// If ie. ref=19.00 and val=17.00,
-		// diff will be negative, because alarm is set
-		// to ring tommorow, not today.
-		if (diff < 0) {
-			diff = 24 * HOUR - (-diff);
-		}
-		
-		return diff;
 	}
 	
 	private void normalize() {

@@ -32,4 +32,12 @@ public class ClockFaceTimeTest extends DeltaTestCase {
 		
 		assertEquals(expected, value);
 	}
+	
+	public void testAngleFromMillis() {
+		long millis = 18 * Time.HOUR + 16 * Time.MINUTE;
+		double value = ClockFaceTime.angleFromMillis(millis);
+		double expected = 188d;
+		
+		assertEquals(expected, value);
+	}
 }

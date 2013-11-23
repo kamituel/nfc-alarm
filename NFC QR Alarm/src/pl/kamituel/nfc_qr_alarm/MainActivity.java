@@ -3,15 +3,16 @@ package pl.kamituel.nfc_qr_alarm;
 import java.util.Iterator;
 
 import pl.kamituel.nfc_qr_alarm.alarm.Alarm;
-import pl.kamituel.nfc_qr_alarm.time.CountdownDecorator;
+import pl.kamituel.nfc_qr_alarm.alarm.OnAlarmStateChangedListener;
+import pl.kamituel.nfc_qr_alarm.time.OnTimeChangedListener;
 import pl.kamituel.nfc_qr_alarm.time.Time;
+import pl.kamituel.nfc_qr_alarm.time.TimeHumanReadable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -42,9 +43,6 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	private Spinner mTimeOfDay = null;
 	
 	private AlarmMgmt mAlarmMgmt = null;
-	private int mSelectedAlarm;
-	
-	private Handler mTimeOfDaySpinnerHandler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +116,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 			}
 		}
 		
-		if ( WakeUpService.isRunning(getApplicationContext()) ) {
+		if (WakeUpService.isRunning(getApplicationContext())) {
 			Log.d(TAG, "onResume(): Started, but alarm is ringing, so switching to correct view");
 			Intent startApp = new Intent(this, WakeUpActivity.class);
 			startApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -127,15 +125,36 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		}
 		
 		mAlarmMgmt.restore();
-		if ( mAlarmMgmt.getAlarms().size() == 0 ) {
-			long defaultAlarmTime = 7 * Time.HOUR;
-			Alarm defaultAlarm = new Alarm(Time.makeAbsolute(defaultAlarmTime), false);
-			mAlarmMgmt.getAlarms().add(defaultAlarm);
+		if ( mAlarmMgmt.getAlarmCount() == 0 ) {
+			Log.d(TAG, "Adding default alarm.");
+			Alarm defaultAlarm = new Alarm(Time.makeAbsolute(getDefaultAlarmTime()), false);
+			mAlarmMgmt.addAlarm(defaultAlarm);
 			mAlarmMgmt.persist();
 		}
-		mSelectedAlarm = 0;
 		//mAlarmMgmt.getSelectedAlarm().addObserver(this);
+		/*mClock.setAlarmTime(getSelectedAlarm().getTime());
+		mClock.setAlarmEnabled(getSelectedAlarm().getEnabled());
+		mClock.addAlarmTimeChangedListener(this);*/
+		Log.d(TAG, "Selected alarm: " + mAlarmMgmt.getAlarm() + " - " + mAlarmMgmt.getAlarm().getTime());
 		mClock.setAlarm(getSelectedAlarm());
+		
+		getSelectedAlarm().getTime().addOnTimeChangedListener(new OnTimeChangedListener() {
+			@Override
+			public void onTimeChanged(Time time, Time oldTime) {
+				refreshInterfaceTime();
+				
+				if (oldTime.isMorning() != time.isMorning()) {
+					refreshInterfaceTimeOfDay();
+				}
+			}
+		});
+		
+		getSelectedAlarm().addListener(new OnAlarmStateChangedListener() {
+			@Override
+			public void onAlarmStateChanged(Alarm alarm, boolean enabled) {
+				refreshInterfaceEnabled();
+			}
+		});
 		
 		refreshInterfaceTime();
 		refreshInterfaceTimeOfDay();
@@ -143,12 +162,12 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	}
 
 	private Alarm getSelectedAlarm() {
-		return mAlarmMgmt.getAlarms().get(mSelectedAlarm);
+		return mAlarmMgmt.getAlarm();
 	}
 
 	public void setAlarm (View v) {
 		Log.d(TAG, "setAlarm(): Setting an alarm or disabling it");
-		
+
 		boolean isAlarmOn = !getSelectedAlarm().getEnabled();
 		getSelectedAlarm().setEnabled(isAlarmOn);
 		mAlarmMgmt.persist();
@@ -156,9 +175,9 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		AlarmTrigger trigger;
 		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
 			Alarm fake = new Alarm(Time.makeRelative(5 * Time.SECOND), true);
-			trigger = new AlarmTrigger(fake.getTime());
+			trigger = new AlarmTrigger(fake);
 		} else {
-			trigger = new AlarmTrigger(getSelectedAlarm().getTime());
+			trigger = new AlarmTrigger(getSelectedAlarm());
 		}
 		
 		if (isAlarmOn) {
@@ -185,9 +204,7 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		switch (item.getItemId()) {
 		case R.id.attribution:
 			Log.d(TAG, "Displaying attribution info");
-			
 			showAboutDialog();
-			
 			break;
 		case R.id.manageTags:
 			Log.d(TAG, "Registerin new, additional tag");
@@ -196,8 +213,8 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		}
 		
 		return true;
-	}
-
+	}	
+	
 	private void showAboutDialog () {
 		String author = getResources().getString(R.string.author);
 		String music = getResources().getString(R.string.music);
@@ -257,8 +274,9 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 	}
 	
 	private void refreshInterfaceTime () {
-		CountdownDecorator countdown = new CountdownDecorator(getSelectedAlarm().getTime());
-		mTime.setText(countdown.getHours() + ":" + countdown.getMinutes());
+		Log.d(TAG, "Refreshing");
+		TimeHumanReadable time = new TimeHumanReadable(getSelectedAlarm().getTime());
+		mTime.setText(time.toString());
 	}
 	
 	private void refreshInterfaceTimeOfDay () {
@@ -277,6 +295,11 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 			enableBtn.setText(R.string.enable_alarm);
 			mTimeOfDay.setEnabled(true);
 		}
+	}
+	
+	private long getDefaultAlarmTime() {
+		return Time.HOUR * getResources().getInteger(R.integer.alarm_default_hour)
+				+ Time.MINUTE * getResources().getInteger(R.integer.alarm_default_minute);
 	}
 	
 	// TODO: not working now

@@ -14,4 +14,8 @@
     
     <item name="logcat_monitor" type="bool">false</item>
     <item name="logcat_dump_file" type="string">pl.kamituel.nfc_qr_alarm.txt</item>
+    
+    <!-- Default alarm time (i.e. when app first launched) -->
+    <item name="alarm_default_hour" type="integer">7</item>
+    <item name="alarm_default_minute" type="integer">0</item>
 </resources>
