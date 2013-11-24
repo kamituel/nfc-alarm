@@ -175,9 +175,9 @@ public class MainActivity extends Activity implements OnGlobalLayoutListener, On
 		AlarmTrigger trigger;
 		if (NfcAlarmApp.hasFlag(R.bool.debug_alarm_in_5_sec)) {
 			Alarm fake = new Alarm(Time.makeRelative(5 * Time.SECOND), true);
-			trigger = new AlarmTrigger(fake);
+			trigger = new AlarmTrigger(this, fake);
 		} else {
-			trigger = new AlarmTrigger(getSelectedAlarm());
+			trigger = new AlarmTrigger(this, getSelectedAlarm());
 		}
 		
 		if (isAlarmOn) {

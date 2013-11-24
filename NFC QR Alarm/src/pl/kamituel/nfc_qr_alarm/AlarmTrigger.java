@@ -21,8 +21,8 @@ public class AlarmTrigger {
 	private AlarmManager mAlarmManager;
 	private Alarm mAlarm;
 		
-	public AlarmTrigger (Alarm alarm) {
-		mCtx = NfcAlarmApp.getContext();
+	public AlarmTrigger (Context ctx, Alarm alarm) {
+		mCtx = ctx;
 		mAlarmManager = (AlarmManager) mCtx.getSystemService(Activity.ALARM_SERVICE);
 		mAlarm = alarm;
 	}

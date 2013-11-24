@@ -15,7 +15,7 @@ public class CountdownDecoratorTest extends AndroidTestCase {
 	}
 	
 	public void testGetMinutes() {
-		Time time = Time.makeRelative(3 * Time.HOUR + 5 * Time.MINUTE);
+		Time time = Time.makeRelative(3 * Time.HOUR + 5 * Time.MINUTE + 5 * Time.SECOND);
 		Alarm a1 = new Alarm(time, true);
 		CountdownDecorator decorator = new CountdownDecorator(a1);
 		
