@@ -165,9 +165,10 @@ public class WakeUpActivity extends NfcActivity {
 			Log.e(TAG, "mWakeLock not acquired");
 		}
 		
-		getWindow().addFlags(
-				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON 
-				| WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON 
+				         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+				         //WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+				         | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 	}
 	
 	private final void releaseWakeLock () {
